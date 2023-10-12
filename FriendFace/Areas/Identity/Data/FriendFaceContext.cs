@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using FriendFace.Models;
 
 namespace FriendFace.Data;
 
@@ -19,4 +20,6 @@ public class FriendFaceContext : IdentityDbContext<FriendFaceUser>
         // For example, you can rename the ASP.NET Identity table names and more.
         // Add your customizations after calling base.OnModelCreating(builder);
     }
+
+    public DbSet<FriendFace.Models.Post> Post { get; set; } = default!;
 }

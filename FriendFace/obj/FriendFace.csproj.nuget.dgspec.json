@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Philip AMD\\Source\\Repos\\friendface\\FriendFace\\FriendFace.csproj": {}
+    "C:\\Users\\Philip AMD\\source\\repos\\friendface\\FriendFace\\FriendFace.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Philip AMD\\Source\\Repos\\friendface\\FriendFace\\FriendFace.csproj": {
+    "C:\\Users\\Philip AMD\\source\\repos\\friendface\\FriendFace\\FriendFace.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Philip AMD\\Source\\Repos\\friendface\\FriendFace\\FriendFace.csproj",
+        "projectUniqueName": "C:\\Users\\Philip AMD\\source\\repos\\friendface\\FriendFace\\FriendFace.csproj",
         "projectName": "FriendFace",
-        "projectPath": "C:\\Users\\Philip AMD\\Source\\Repos\\friendface\\FriendFace\\FriendFace.csproj",
+        "projectPath": "C:\\Users\\Philip AMD\\source\\repos\\friendface\\FriendFace\\FriendFace.csproj",
         "packagesPath": "C:\\Users\\Philip AMD\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Philip AMD\\Source\\Repos\\friendface\\FriendFace\\obj\\",
+        "outputPath": "C:\\Users\\Philip AMD\\source\\repos\\friendface\\FriendFace\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Philip AMD\\AppData\\Roaming\\NuGet\\NuGet.Config",
