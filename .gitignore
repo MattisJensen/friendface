@@ -96,3 +96,4 @@ _[Ss]cripts
 **/.idea/**/modules.xml
 
 .idea/
+.DS_Store
