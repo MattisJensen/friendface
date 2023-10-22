@@ -1,12 +1,4 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using FriendFace.Data;
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("FriendFaceContextConnection") ?? throw new InvalidOperationException("Connection string 'FriendFaceContextConnection' not found.");
-
-builder.Services.AddDbContext<FriendFaceContext>(options => options.UseSqlServer(connectionString));
-
-builder.Services.AddDefaultIdentity<FriendFaceUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FriendFaceContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
