@@ -1,15 +1,21 @@
-﻿namespace FriendFace.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace FriendFace.Models
 {
     public class Post
     {
-        public int PostId { get; set; }
-        public string Content { get; set; }
-        public DateTime DatePosted { get; set; }
-        public int UserId { get; set; } // Foreign Key
+        [Key] public int Id { get; set; }
 
-        // Navigation properties
-        public virtual User User { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
+        [Required] public string Content { get; set; }
+
+        [Required] public DateTime Time { get; set; }
+
+        [ForeignKey("UserId")] public virtual User User { get; set; }
+
+        [ForeignKey("PostId")] public virtual ICollection<UserLikesPost> LikedByUsers { get; set; }
+
+        [ForeignKey("PostId")] public virtual ICollection<Comment> Comments { get; set; }
+
     }
-
 }

@@ -1,4 +1,6 @@
-﻿namespace FriendFace.Data
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace FriendFace.Data
 
 {
     using FriendFace.Models;
@@ -7,14 +9,14 @@
 
     public class ApplicationDbContext : IdentityDbContext<User>
     {
-
         // DbSet for each entity/table we want to interact with
         public DbSet<User> Users { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<UserFollowsUser> UserFollowsUsers { get; set; }
+        public DbSet<UserLikesPost> UserLikesPosts { get; set; }
         public DbSet<Comment> Comments { get; set; }
 
-        public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+        public ApplicationDbContext() : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
 
@@ -25,7 +27,9 @@
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);  // This needs to be called before the custom model configurations
+            base.OnModelCreating(modelBuilder);
+
+            /* base.OnModelCreating(modelBuilder); // This needs to be called before the custom model configurations
 
             // User to Post relation: One-to-Many
             modelBuilder.Entity<User>()
@@ -55,8 +59,8 @@
                     cs.MapRightKey("FollowerId");
                     cs.ToTable("UserFollowers");
                 });
-        }
-
+        }*/
     }
+}
 
 }
