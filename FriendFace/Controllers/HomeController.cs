@@ -1,6 +1,7 @@
 ﻿using FriendFace.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace FriendFace.Controllers
 {
