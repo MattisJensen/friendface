@@ -1,9 +1,21 @@
 ﻿@model FriendFace.ViewModels.HomeIndexViewModel
-@{
-    ViewData["Title"] = "Home Page";
-}
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container text-center">
+    <h3>@Model.User.FirstName@Html.Raw("'s Feed")</h3>
+</div>
+<div class="container text-left">
+    <div class="row">
+        @foreach (var post in Model.PostsInFeed)
+        {
+            <div class="col-md-6 offset-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <span style="font-size: 80%;">@Html.Raw("@")@post.User.Username</span>
+                        <p class="card-text text-left">@post.Content</p>
+                        <small class="text-muted">Published on @post.Time.ToString("yyyy-MM-dd HH:mm")</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>

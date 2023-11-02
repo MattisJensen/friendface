@@ -5,6 +5,7 @@ using FriendFace.Data;
 using FriendFace.ViewModels;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace FriendFace.Controllers
 {
@@ -21,13 +22,23 @@ namespace FriendFace.Controllers
 
         public IActionResult Index()
         {
-            User userLoggedIn = _context.Users.Find(1); // !! here we still need to find the user that is logged in, and handle if no user is logged in !!
+            // !! here we still need to find the user that is logged in, and handle if no user is logged in !!
+            User userLoggedIn = _context.Users
+                .Include(u => u.Following)  // Load the users UserA follows
+                .Include(u => u.Followers)   // Load the users following UserA
+                .FirstOrDefault(u => u.Id == 1);
+            
+            // Fetch the IDs of the users UserA is following
+            List<int> followingUserIds = userLoggedIn.Following.Select(f => f.FollowingId).ToList();
 
-            // Fetches the latest posts from the users that the logged in user follows
-            var latestPostsFromFollowing = (from post in _context.Posts
-                where userLoggedIn.Followers.Any(follow => follow.FollowingId == post.User.Id)
-                orderby post.Time descending
-                select post).ToList();
+
+            // Then, query for the 10 newest posts from those users
+            List<Post> latestPostsFromFollowing = _context.Posts
+                .Include(p => p.User)
+                .Where(post => followingUserIds.Contains(post.UserId))
+                .OrderByDescending(post => post.Time)
+                .Take(20)
+                .ToList();
             
             HomeIndexViewModel homeIndexViewModel = new HomeIndexViewModel()
             {
@@ -36,8 +47,6 @@ namespace FriendFace.Controllers
             };
 
             return View(homeIndexViewModel);
-
-            return View();
         }
 
         public IActionResult Privacy()
