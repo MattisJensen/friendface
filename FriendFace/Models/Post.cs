@@ -3,21 +3,29 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FriendFace.Models
+namespace FriendFace.Models;
+
+public class Post
 {
-    public class Post
-    {
-        [Key] public int Id { get; set; }
+    [Key]
+    public int Id { get; set; }
 
-        [Required] public string Content { get; set; }
+    [Required]
+    [MaxLength(280)]
+    public string Content { get; set; }
 
-        [Required] public DateTime Time { get; set; }
+    [Required]
+    public DateTime Time { get; set; }
 
-        [ForeignKey("UserId")] public virtual User User { get; set; }
+    [ForeignKey("UserId")]
+    public int UserId { get; set; }
 
-        [ForeignKey("PostId")] public virtual ICollection<UserLikesPost> LikedByUsers { get; set; }
+    // Navigation property for the user who made the post
+    public virtual User User { get; set; }
 
-        [ForeignKey("PostId")] public virtual ICollection<Comment> Comments { get; set; }
+    // Navigation property for post likes
+    public virtual ICollection<UserLikesPost> Likes { get; set; }
 
-    }
+    // Navigation property for post comments
+    public virtual ICollection<Comment> Comments { get; set; }
 }
