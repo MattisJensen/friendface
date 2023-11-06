@@ -5,6 +5,7 @@ using FriendFace.Data;
 using FriendFace.ViewModels;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using FriendFace.Services.DatabaseService;
 using Microsoft.EntityFrameworkCore;
 
 namespace FriendFace.Controllers
@@ -23,27 +24,12 @@ namespace FriendFace.Controllers
         public IActionResult Index()
         {
             // !! here we still need to find the user that is logged in, and handle if no user is logged in !!
-            User userLoggedIn = _context.Users
-                .Include(u => u.Following)  // Load the users UserA follows
-                .Include(u => u.Followers)   // Load the users following UserA
-                .FirstOrDefault(u => u.Id == 1);
-            
-            // Fetch the IDs of the users UserA is following
-            List<int> followingUserIds = userLoggedIn.Following.Select(f => f.FollowingId).ToList();
-
-
-            // Then, query for the 10 newest posts from those users
-            List<Post> latestPostsFromFollowing = _context.Posts
-                .Include(p => p.User)
-                .Where(post => followingUserIds.Contains(post.UserId))
-                .OrderByDescending(post => post.Time)
-                .Take(20)
-                .ToList();
+            User loggedInUser = UserQueryService.getUser(_context, 2);
             
             HomeIndexViewModel homeIndexViewModel = new HomeIndexViewModel()
             {
-                User = userLoggedIn,
-                PostsInFeed = latestPostsFromFollowing
+                User = loggedInUser,
+                PostsInFeed = PostQueryService.getLatestPostsFromFollowingUserIDs(_context, UserQueryService.getFollowingUserIds(loggedInUser))
             };
 
             return View(homeIndexViewModel);
