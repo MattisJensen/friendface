@@ -21,14 +21,25 @@
             <div class="col-md-6 offset-md-3 mb-3">
                 <div class="card">
                     <div class="card-body">
-                        <span style="font-size: 80%;">@Html.Raw("@")@post.User.Username</span>
+                        <span style="font-weight: bold;">@post.User.FirstName @Html.Raw(" ") @post.User.LastName</span>
+                        <span style="font-size: 80%;" class="text-muted">@Html.Raw("@")@post.User.Username</span>
                         <p class="card-text text-left">@post.Content</p>
-                        
+
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">@post.Time.ToString("HH:mm dd/MM/yy")</small>
 
                             <span style="font-size: 80%;" class="text-muted">
-                                <i class="fas fa-heart" style="color: red;"></i> @post.Likes.Count
+                                @if (post.Likes.Any(like => like.UserId == Model.User.Id))
+                                {
+                                    <i class="fas fa-heart" style="color: red;"></i>
+                                    @post.Likes.Count
+                                }
+                                else
+                                {
+                                    <i class="far fa-heart" style="color: grey;"></i>
+                                    @post.Likes.Count
+                                }
+                                <i class="far fa-comment"></i> @post.Comments.Count
                             </span>
                         </div>
                     </div>
@@ -37,8 +48,5 @@
         }
     </div>
 </div>
-
-
-
 </body>
 </html>

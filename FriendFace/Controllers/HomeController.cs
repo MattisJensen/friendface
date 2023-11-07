@@ -46,11 +46,6 @@ namespace FriendFace.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
         
-        public bool userHasLikedPost(int userId, int postId)
-        {
-            return PostQueryService.userHasLikedPost(_context, userId, postId);
-        }
-
         public void likePost(int userId)
         {
             
