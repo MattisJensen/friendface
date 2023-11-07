@@ -1,0 +1,44 @@
+﻿@model YourProject.ViewModels.UserProfileViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "View Profile";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>@Model.FullName's Profile</h2>
+            <div class="profile-header">
+                <img src="@Url.Content(Model.ProfilePicturePath)" alt="Profile Picture" class="profile-picture" />
+                <h3>@Model.FullName</h3>
+                <p>@Model.Email</p>
+                <p>@Model.Bio</p>
+            </div>
+            
+            <!-- Additional profile information here -->
+            <div class="profile-details">
+                <h4>Details</h4>
+                <p><strong>Location:</strong> @Model.Location</p>
+                <p><strong>Joined:</strong> @Model.JoinDate.ToString("D")</p>
+                <!-- More fields as necessary -->
+            </div>
+
+            <!-- Edit profile button -->
+            @if (User.Identity.IsAuthenticated && User.Identity.Name == Model.Username)
+            {
+                <a href="@Url.Action("EditProfile", "Profile")" class="btn btn-default">Edit Profile</a>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+        }
+    </style>
+}
