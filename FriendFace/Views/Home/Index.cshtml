@@ -1,4 +1,15 @@
 ﻿@model FriendFace.ViewModels.HomeIndexViewModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
 
 <div class="container text-center">
     <h3>@Model.User.FirstName@Html.Raw("'s Feed")</h3>
@@ -12,10 +23,22 @@
                     <div class="card-body">
                         <span style="font-size: 80%;">@Html.Raw("@")@post.User.Username</span>
                         <p class="card-text text-left">@post.Content</p>
-                        <small class="text-muted">Published on @post.Time.ToString("yyyy-MM-dd HH:mm")</small>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">@post.Time.ToString("HH:mm dd/MM/yy")</small>
+
+                            <span style="font-size: 80%;" class="text-muted">
+                                <i class="fas fa-heart" style="color: red;"></i> @post.Likes.Count
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
         }
     </div>
 </div>
+
+
+
+</body>
+</html>
