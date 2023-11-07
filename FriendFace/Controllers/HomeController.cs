@@ -24,7 +24,7 @@ namespace FriendFace.Controllers
         public IActionResult Index()
         {
             // !! here we still need to find the user that is logged in, and handle if no user is logged in !!
-            User loggedInUser = UserQueryService.getUser(_context, 2);
+            User loggedInUser = UserQueryService.getUser(_context, 1);
             
             HomeIndexViewModel homeIndexViewModel = new HomeIndexViewModel()
             {
@@ -44,6 +44,16 @@ namespace FriendFace.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        
+        public bool userHasLikedPost(int userId, int postId)
+        {
+            return PostQueryService.userHasLikedPost(_context, userId, postId);
+        }
+
+        public void likePost(int userId)
+        {
+            
         }
     }
 }
