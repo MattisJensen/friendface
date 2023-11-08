@@ -73,10 +73,12 @@ namespace FriendFace.Controllers
             await using var conn = new SqlConnection(_connString);
             await conn.OpenAsync();
 
-            
+
             string username = Request.Form["uname"];
             string password = Request.Form["psw"]; // This far, the password is probably plain-text.
             string email = Request.Form["email"];
+            
+            Console.WriteLine(email);
 
             bool affectedOneRow;
             
