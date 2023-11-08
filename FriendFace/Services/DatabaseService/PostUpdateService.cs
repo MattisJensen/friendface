@@ -17,7 +17,7 @@ public class PostUpdateService
         context.SaveChanges();
     }
     
-    public bool UpdatePost(ApplicationDbContext context, int postId, string updatedContent)
+    public static bool UpdatePost(ApplicationDbContext context, int postId, string updatedContent)
     {
         if (context.Posts.Find(postId) == null)
         {
@@ -35,7 +35,7 @@ public class PostUpdateService
         return true;
     }
     
-    public bool DeletePost(ApplicationDbContext context, int postId)
+    public static bool DeletePost(ApplicationDbContext context, int postId)
     {
         if (context.Posts.Find(postId) == null)
         {

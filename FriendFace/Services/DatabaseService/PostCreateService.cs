@@ -5,7 +5,7 @@ namespace FriendFace.Services.DatabaseService;
 
 public class PostCreateService
 {
-    public bool CreatePost(ApplicationDbContext context, string content, User sourceUser)
+    public static bool CreatePost(ApplicationDbContext context, string content, User sourceUser)
     {
         if (content.Length > 280)
         {
