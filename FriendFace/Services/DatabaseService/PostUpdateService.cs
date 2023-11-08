@@ -16,4 +16,35 @@ public class PostUpdateService
         context.UserLikesPosts.Add(like);
         context.SaveChanges();
     }
+    
+    public bool UpdatePost(ApplicationDbContext context, int postId, string updatedContent)
+    {
+        if (context.Posts.Find(postId) == null)
+        {
+            throw new KeyNotFoundException();
+        }
+
+        Post orgPost = context.Posts.Find(postId);
+
+        Post post = orgPost;
+        post.Content = updatedContent;
+
+        context.Posts.Add(post);
+        context.SaveChanges();
+
+        return true;
+    }
+    
+    public bool DeletePost(ApplicationDbContext context, int postId)
+    {
+        if (context.Posts.Find(postId) == null)
+        {
+            throw new KeyNotFoundException();
+        }
+
+        context.Posts.Remove(context.Posts.Find(postId));
+        context.SaveChanges();
+        
+        return true;
+    }
 }
