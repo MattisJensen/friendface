@@ -1,29 +1,35 @@
 ﻿using System.Threading.Tasks;
+using FriendFace.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Microsoft.Extensions.Configuration;
 using NpgsqlTypes;
+using SignInResult = Microsoft.AspNetCore.Mvc.SignInResult;
 
 namespace FriendFace.Controllers
 {
     public class LoginController : Controller
-    {
-        /*private static IConfiguration _config = new ConfigurationBuilder() // Uses secrets. One needs to have a secrets.json file setup: https://blog.jetbrains.com/dotnet/2023/01/17/securing-sensitive-information-with-net-user-secrets/
-            .AddUserSecrets<Program>()
-            .Build();
-        
-        private static string _connString = _config["connectionString"]; // Retrieves the connection string as a stored secret, on the format: "Host=cornelius.db.elephantsql.com:5432;Username=<username>;Password=<password;Database=<database>"
-        */
-        
-        // Retrieve connection string from appsettings.json
+    {   
         private static IConfiguration _config = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
-        private static string _connString = _config.GetConnectionString("FriendFaceIdentityDbContextConnection");
 
-        
-        
+        private readonly ApplicationDbContext _context;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public LoginController(ApplicationDbContext context, SignInManager<IdentityUser> signInManager, 
+                                UserManager<IdentityUser> userManager)
+        {
+            _context = context;
+            _signInManager = signInManager;
+            _userManager = userManager;
+        }
+
+
         // Main login-page
         public IActionResult Index()
         {
@@ -37,85 +43,56 @@ namespace FriendFace.Controllers
         }
         
         // Handling the log-in info
-        public async Task<bool> DoLogin()
+        public async Task<IActionResult> DoLogin(string uname, string psw)
         {
-            // Establish DB connection
-            await using var dataSource = NpgsqlDataSource.Create(_connString);
-            
-            // Sanitize input
-            // ...
-            
-            string username = Request.Form["uname"];
-            string password = Request.Form["psw"]; // This far, the password is probably plain-text.
-            
-            bool hasReturn;
-            
-            // Insert input data
-            await using (var cmd = dataSource.CreateCommand("SELECT id FROM users WHERE username = $1 " +
-                                                            "AND password = crypt($2, password)"))
-            {
-                cmd.Parameters.AddWithValue(NpgsqlDbType.Varchar, username);
-                cmd.Parameters.AddWithValue(NpgsqlDbType.Varchar, password);
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+            var result = await _signInManager.PasswordSignInAsync(uname, psw, isPersistent: true, lockoutOnFailure: false);
 
-                await using (var reader = await cmd.ExecuteReaderAsync())
-                {
-                    hasReturn = reader.HasRows;
-                }
+            if (result.Succeeded)
+            {
+                // Redirect the user to the return URL or a default page
+                return RedirectToAction("Index", "Home");
+            }
+            else if (result.IsLockedOut)
+            {
+                // Handle user lockout scenario
+            }
+            else
+            {
+                // Authentication has failed. Show login form with error message.
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return RedirectToAction("Index", "Home");
             }
 
-            return hasReturn;
+            return RedirectToAction("Index", "Home");
         }
+
         
         // Registration-page
-        public async Task<bool> DoRegister()
+        public async Task<IActionResult> DoRegister(string uname, string psw, string email)
         {
-            // Establish DB connection
-            await using var conn = new SqlConnection(_connString);
-            await conn.OpenAsync();
+            
+            
+            // Create a new User object
+            var user = new User { Username = uname, FirstName = "Test", LastName = "Test", Password = psw, Email = email };
+        
+            // Add the new user to the DbContext
+            _context.Users.Add(user);
+        
+            // Save changes to the database
+            var affectedRows = _context.SaveChanges();
 
-
-            string username = Request.Form["uname"];
-            string password = Request.Form["psw"]; // This far, the password is probably plain-text.
-            string email = Request.Form["email"];
-            
-            Console.WriteLine(email);
-
-            bool affectedOneRow;
-            
-            // Sanitize input
-            // ...
-            
-            
-            // Insert User to MySQL DB
-            await using (var cmd = conn.CreateCommand())
+            if (affectedRows == 1)
             {
-                cmd.CommandText = "INSERT INTO users (username, password, email) VALUES (@username, crypt(@password, gen_salt('bf')), @email)";
-                cmd.Parameters.AddWithValue("@username", username);
-                cmd.Parameters.AddWithValue("@password", password);
-                cmd.Parameters.AddWithValue("@email", email);
-
-                affectedOneRow = await cmd.ExecuteNonQueryAsync() == 1;
+                var result = await _signInManager.PasswordSignInAsync(user.Username, user.Password, 
+                                                            isPersistent: true, lockoutOnFailure: false);
+                return RedirectToAction("Index", "Home");
             }
-            
-            
-            // Verify insertion
-            await using (var cmd = conn.CreateCommand())
+            else
             {
-                cmd.CommandText = "SELECT id FROM users WHERE username = @username";
-                cmd.Parameters.AddWithValue("@username", username);
-
-                await using (var reader = await cmd.ExecuteReaderAsync())
-                {
-                    if (await reader.ReadAsync())
-                    {
-                        var id = reader.GetInt32(0);
-                        // ...
-                    }
-                }
+                throw new Exception("User was not created.");
             }
-            
-
-            return affectedOneRow;
         }
     }
 }
