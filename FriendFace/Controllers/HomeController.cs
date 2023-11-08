@@ -5,6 +5,8 @@ using FriendFace.Data;
 using FriendFace.ViewModels;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using FriendFace.Services.DatabaseService;
+using Microsoft.EntityFrameworkCore;
 
 namespace FriendFace.Controllers
 {
@@ -21,24 +23,16 @@ namespace FriendFace.Controllers
 
         public IActionResult Index()
         {
-            /*User userLoggedIn = _context.Users.Find(1); // !! here we still need to find the user that is logged in, and handle if no user is logged in !!
-
-            // Fetches the latest posts from the users that the logged in user follows
-            var latestPostsFromFollowing = (from post in _context.Posts
-                where userLoggedIn.FollowedUsers.Any(follow => follow.FollowedUserId == post.User.Id)
-                orderby post.Time descending
-                select post).ToList();
-
-
+            // !! here we still need to find the user that is logged in, and handle if no user is logged in !!
+            User loggedInUser = UserQueryService.getUser(_context, 1);
+            
             HomeIndexViewModel homeIndexViewModel = new HomeIndexViewModel()
             {
-                User = userLoggedIn,
-                PostsInFeed = latestPostsFromFollowing
+                User = loggedInUser,
+                PostsInFeed = PostQueryService.getLatestPostsFromFollowingUserIDs(_context, UserQueryService.getFollowingUserIds(loggedInUser))
             };
 
-            return View(homeIndexViewModel);*/
-
-            return View();
+            return View(homeIndexViewModel);
         }
 
         public IActionResult Privacy()
@@ -50,6 +44,11 @@ namespace FriendFace.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        
+        public void likePost(int userId)
+        {
+            
         }
     }
 }

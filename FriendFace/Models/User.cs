@@ -1,40 +1,41 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using FriendFace.Data;
+using FriendFace.Models;
 
-namespace FriendFace.Models
+public class User
 {
-    using Microsoft.AspNet.Identity.EntityFramework;
+    [Key]
+    public int Id { get; set; }
 
-    public class User : IdentityUser
-    {
-        [Key] public int Id { get; set; }
+    [Required]
+    [MaxLength(50)]
+    public string Username { get; set; }
 
-        [Required] public string Username { get; set; }
+    [Required]
+    [MaxLength(50)]
+    public string FirstName { get; set; }
 
-        [Required] public string FirstName { get; set; }
+    [Required]
+    [MaxLength(50)]
+    public string LastName { get; set; }
 
-        [Required] public string LastName { get; set; }
+    [Required]
+    [MaxLength(100)]
+    public string Email { get; set; }
 
-        [NotMapped] public int Followers { get; set; }
+    [Required]
+    [MaxLength(100)]
+    public string Password { get; set; }
 
-        [Required] public string Email { get; set; }
+    // Navigation properties
+    public virtual ICollection<UserFollowsUser> Following { get; set; }
+    public virtual ICollection<UserFollowsUser> Followers { get; set; }
+    
+    public virtual ICollection<Post> Posts { get; set; }
 
-        [Required] public string Password { get; set; }
+    public virtual ICollection<UserLikesPost> Likes { get; set; }
 
-        [ForeignKey("FollowerId")] public virtual ICollection<UserFollowsUser> FollowedUsers { get; set; }
-
-        [ForeignKey("UserId")] public virtual ICollection<UserLikesPost> LikedPosts { get; set; }
-
-        [ForeignKey("UserId")] public virtual ICollection<Post> Posts { get; set; }
-
-        [ForeignKey("UserId")] public virtual ICollection<Comment> Comments { get; set; }
-
-        public void CalculateFollowersCount(ApplicationDbContext context)
-        {
-            this.Followers = context.UserFollowsUsers.Count(follow => follow.FollowedUserId == Id);
-        }
-    }
+    public virtual ICollection<Comment> Comments { get; set; }
 }
