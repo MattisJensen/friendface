@@ -1,12 +1,14 @@
 using FriendFace.Data;
 using FriendFace.Models;
+using FriendFace.Services.DatabaseService;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts;
 
 namespace FriendFace.Controllers;
 
 /*
  NB: All of the following CRUD methods, are quite possibly in the wrong class. Each method should possibly
- be sorted into seperate service classes
+ be sorted into separate service classes
  */
 public class PostController : Controller
 {
@@ -17,55 +19,48 @@ public class PostController : Controller
         this._context = context;
     }
 
-    public bool CreatePost(string content, User sourceUser)
+    // Queries
+    public Post GetPostFromId(ApplicationDbContext context, int postId)
     {
-        if (content.Length > 280)
-        {
-            throw new Exception("Post content string too long.");
-        }
-
-        var post = new Post
-        {
-            Content = content,
-            User = sourceUser,
-            Time = DateTime
-                .UtcNow, // Uses UtcNow, such that the view can calculate the posts createTime in localtime, by comparing local timezone to UTC.
-        };
-
-        _context.Posts.Add(post);
-        _context.SaveChanges();
-
-        return true;
+        return PostQueryService.getPostFromId(context, postId);
     }
 
-    public bool UpdatePost(int postId, string updatedContent)
+    public int GetNumberOfLikes(ApplicationDbContext context, int postId)
     {
-        if (_context.Posts.Find(postId) == null)
-        {
-            throw new KeyNotFoundException();
-        }
-
-        Post orgPost = _context.Posts.Find(postId);
-
-        Post post = orgPost;
-        post.Content = updatedContent;
-
-        _context.Posts.Add(post);
-        _context.SaveChanges();
-
-        return true;
+        return PostQueryService.getNumberOfLikes(context, postId);
     }
 
-    public bool DeletePost(int postId)
+    public bool UserHasLikedPost(ApplicationDbContext context, int userId, int postId)
     {
-        if (_context.Posts.Find(postId) == null)
-        {
-            throw new KeyNotFoundException();
-        }
+        return PostQueryService.userHasLikedPost(context, userId, postId);
+    }
 
-        _context.Posts.Remove(_context.Posts.Find(postId));
-        _context.SaveChanges();
-        
-        return true;
+    public List<Post> GetLatestPostsFromFollowingUserIDs(ApplicationDbContext context,
+        List<int> followingUserIds)
+    {
+        return PostQueryService.getLatestPostsFromFollowingUserIDs(context, followingUserIds);
+    }
+    
+    // Creation
+    public bool CreatePost(ApplicationDbContext context, string content, User sourceUser)
+    {
+        return PostCreateService.CreatePost(context, content, sourceUser);
+    }
+    
+    
+    // Updates
+    public void AddLikeToPost(ApplicationDbContext context, int postId, int userId)
+    {
+        PostUpdateService.addLikeToPost(context, postId, userId);
+    }
+
+    public bool UpdatePost(ApplicationDbContext context, int postId, string updatedContent)
+    {
+        return PostUpdateService.UpdatePost(context, postId, updatedContent);
+    }
+
+    public bool DeletePost(ApplicationDbContext context, int postId)
+    {
+        return PostUpdateService.DeletePost(context, postId);
     }
 }
