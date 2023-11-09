@@ -66,6 +66,9 @@ namespace FriendFace.Migrations
                         .HasMaxLength(280)
                         .HasColumnType("character varying(280)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("Time")
                         .HasColumnType("timestamp with time zone");
 

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FriendFace.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231102144555_DbInit")]
+    [Migration("20231109175222_DbInit")]
     partial class DbInit
     {
         /// <inheritdoc />
@@ -68,6 +68,9 @@ namespace FriendFace.Migrations
                         .IsRequired()
                         .HasMaxLength(280)
                         .HasColumnType("character varying(280)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("Time")
                         .HasColumnType("timestamp with time zone");
