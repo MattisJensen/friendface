@@ -42,8 +42,27 @@
                                 <i class="far fa-comment"></i> @post.Comments.Count
                             </span>
                         </div>
+
+                        @foreach (var comment in post.Comments.OrderByDescending(c => c.Time))
+                        {
+                            <div class="card mt-2">
+                                <div class="card-body">
+
+                                    <div>
+                                        <span  style="font-weight: bold;font-size: 90%;">@comment.User.FirstName @Html.Raw(" ") @comment.User.LastName</span>
+                                        <span style="font-size: 70%;" class="text-muted">@Html.Raw("@")@comment.User.Username</span>
+                                        <small style="font-size: 70%;" class="text-muted">@comment.Time.ToString("HH:mm dd/MM/yy")</small>
+                                        <p style="font-size: 90%;" class="card-text text-left">@comment.Content</p>
+                                        
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
+
+
             </div>
         }
     </div>
