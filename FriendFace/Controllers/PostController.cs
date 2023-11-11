@@ -17,7 +17,8 @@ public class PostController : Controller
     private readonly PostCreateService _postCreateService;
     private readonly PostUpdateService _postUpdateService;
 
-    public PostController(ApplicationDbContext context, PostQueryService postQueryService, PostCreateService postCreateService, PostUpdateService postUpdateService)
+    public PostController(ApplicationDbContext context, PostQueryService postQueryService,
+        PostCreateService postCreateService, PostUpdateService postUpdateService)
     {
         _context = context;
         _postQueryService = postQueryService;
@@ -38,21 +39,21 @@ public class PostController : Controller
 
     public bool UserHasLikedPost(int userId, int postId)
     {
-        return _postQueryService.userHasLikedPost(userId, postId);
+        return _postQueryService.hasUserLikedPost(userId, postId);
     }
 
     public List<Post> GetLatestPostsFromFollowingUserIDs(List<int> followingUserIds)
     {
         return _postQueryService.getLatestPostsFromFollowingUserIDs(followingUserIds);
     }
-    
+
     // Creation
     public bool CreatePost(string content, User sourceUser)
     {
         return _postCreateService.CreatePost(content, sourceUser);
     }
-    
-    
+
+
     // Updates
     public void AddLikeToPost(int postId, int userId)
     {

@@ -32,4 +32,16 @@ public class PostCreateService
 
         return true;
     }
+    
+    public void addLikeToPost(int postId, int userId)
+    {
+        var like = new UserLikesPost
+        {
+            PostId = postId,
+            UserId = userId
+        };
+        
+        _context.UserLikesPosts.Add(like);
+        _context.SaveChanges();
+    }
 }

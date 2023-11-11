@@ -15,14 +15,24 @@ namespace FriendFace.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
         private readonly UserQueryService _userQueryService;
+        private readonly UserCreateService _userCreateService;
         private readonly PostQueryService _postQueryService;
+        private readonly PostDeleteService _postDeleteService;
+        private readonly PostCreateService _postCreateService;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserQueryService userQueryService, PostQueryService postQueryService)
+
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context,
+            UserQueryService userQueryService, PostQueryService postQueryService,
+            PostDeleteService postDeleteService, PostCreateService postCreateService,
+            UserCreateService userCreateService)
         {
             _logger = logger;
             _context = context;
             _userQueryService = userQueryService;
+            _userCreateService = userCreateService;
             _postQueryService = postQueryService;
+            _postDeleteService = postDeleteService;
+            _postCreateService = postCreateService;
         }
 
         public IActionResult Index()
@@ -32,7 +42,9 @@ namespace FriendFace.Controllers
             HomeIndexViewModel homeIndexViewModel = new HomeIndexViewModel()
             {
                 User = loggedInUser,
-                PostsInFeed = _postQueryService.getLatestPostsFromFollowingUserIDs(_userQueryService.getFollowingUserIds(loggedInUser))
+                PostsInFeed =
+                    _postQueryService.getLatestPostsFromFollowingUserIDs(
+                        _userQueryService.getFollowingUserIds(loggedInUser))
             };
 
             return View(homeIndexViewModel);
@@ -52,37 +64,22 @@ namespace FriendFace.Controllers
         [HttpPost]
         public async Task<IActionResult> ToggleLikePost([FromBody] int postId)
         {
-            var post = await _context.Posts.FindAsync(postId);
+            var post = _postQueryService.getPostFromId(postId);
 
-            if (post == null)
-            {
-                return NotFound();
-            }
+            if (post == null) return NotFound();
 
             var user = _userQueryService.getUser(1);
+            var existingLike = _postQueryService.hasUserLikedPost(user.Id, postId);
 
-            var existingLike =
-                await _context.UserLikesPosts.SingleOrDefaultAsync(like =>
-                    like.UserId == user.Id && like.PostId == postId);
-
-            if (existingLike != null)
+            if (existingLike)
             {
                 // If a like by the user already exists, remove it
-                _context.UserLikesPosts.Remove(existingLike);
+                _postDeleteService.removeLikeFromPost(postId, user.Id);
             }
             else
             {
-                // If no like by the user exists, add a new one
-                var like = new UserLikesPost
-                {
-                    UserId = user.Id,
-                    PostId = postId
-                };
-
-                _context.UserLikesPosts.Add(like);
+                _postCreateService.addLikeToPost(postId, user.Id);
             }
-
-            await _context.SaveChangesAsync();
 
             return Ok();
         }
@@ -92,14 +89,11 @@ namespace FriendFace.Controllers
         {
             var post = _postQueryService.getPostFromId(postId);
 
-            if (post == null)
-            {
-                return NotFound();
-            }
+            if (post == null) return NotFound();
 
             var user = _userQueryService.getUser(1);
 
-            var isLiked = post.Likes.Any(like => like.UserId == user.Id);
+            var isLiked = _postQueryService.hasUserLikedPost(user.Id, postId);
 
             var likeCount = post.Likes.Count;
 

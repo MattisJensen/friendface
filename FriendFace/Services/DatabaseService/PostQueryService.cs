@@ -28,13 +28,14 @@ public class PostQueryService
             .Count(ul => ul.PostId == postId);
     }
 
-    public bool userHasLikedPost(int userId, int postId)
+    public bool hasUserLikedPost(int userId, int postId)
     {
-        // Checks UserLikesPost for the given user and post IDs
-        return _context.UserLikesPosts
-            .Any(ulp => ulp.UserId == userId && ulp.PostId == postId);
+        var existingLike = _context.UserLikesPosts.SingleOrDefault(like =>
+            like.UserId == userId && like.PostId == postId);
+        
+        return existingLike != null;
     }
-
+    
     public List<Post> getLatestPostsFromFollowingUserIDs(List<int> followingUserIds)
     {
         return _context.Posts

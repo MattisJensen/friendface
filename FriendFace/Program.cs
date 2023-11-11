@@ -19,9 +19,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<CommentCreateService>();
 builder.Services.AddScoped<CommentQueryService>();
-builder.Services.AddScoped<LikeCreateService>();
-builder.Services.AddScoped<LikeDeleteService>();
-builder.Services.AddScoped<LikeQueryService>();
+builder.Services.AddScoped<PostDeleteService>();
 builder.Services.AddScoped<PostCreateService>();
 builder.Services.AddScoped<PostQueryService>();
 builder.Services.AddScoped<PostUpdateService>();
