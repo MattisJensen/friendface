@@ -5,7 +5,14 @@ namespace FriendFace.Services.DatabaseService;
 
 public class PostUpdateService
 {
-    public static void addLikeToPost(ApplicationDbContext context, int postId, int userId)
+    private readonly ApplicationDbContext _context;
+    
+    public PostUpdateService(ApplicationDbContext context)
+    {
+        _context = context;
+    }
+    
+    public void addLikeToPost(int postId, int userId)
     {
         var like = new UserLikesPost
         {
@@ -13,37 +20,37 @@ public class PostUpdateService
             UserId = userId
         };
         
-        context.UserLikesPosts.Add(like);
-        context.SaveChanges();
+        _context.UserLikesPosts.Add(like);
+        _context.SaveChanges();
     }
     
-    public static bool UpdatePost(ApplicationDbContext context, int postId, string updatedContent)
+    public bool UpdatePost(int postId, string updatedContent)
     {
-        if (context.Posts.Find(postId) == null)
+        if (_context.Posts.Find(postId) == null)
         {
             throw new KeyNotFoundException();
         }
 
-        Post orgPost = context.Posts.Find(postId);
+        Post orgPost = _context.Posts.Find(postId);
 
         Post post = orgPost;
         post.Content = updatedContent;
 
-        context.Posts.Add(post);
-        context.SaveChanges();
+        _context.Posts.Add(post);
+        _context.SaveChanges();
 
         return true;
     }
     
-    public static bool DeletePost(ApplicationDbContext context, int postId)
+    public bool DeletePost(int postId)
     {
-        if (context.Posts.Find(postId) == null)
+        if (_context.Posts.Find(postId) == null)
         {
             throw new KeyNotFoundException();
         }
 
-        context.Posts.Remove(context.Posts.Find(postId));
-        context.SaveChanges();
+        _context.Posts.Remove(_context.Posts.Find(postId));
+        _context.SaveChanges();
         
         return true;
     }

@@ -6,32 +6,38 @@ namespace FriendFace.Services.DatabaseService;
 
 public class PostQueryService
 {
-    public static Post getPostFromId(ApplicationDbContext context, int postId)
+    private readonly ApplicationDbContext _context;
+    
+    public PostQueryService(ApplicationDbContext context)
     {
-        return context.Posts
+        _context = context;
+    }
+    
+    public Post getPostFromId(int postId)
+    {
+        return _context.Posts
             .Include(p => p.User)
             .Include(p => p.Likes)
             .Include(p => p.Comments)
             .FirstOrDefault(p => p.Id == postId);
     }
 
-    public static int getNumberOfLikes(ApplicationDbContext context, int postId)
+    public int getNumberOfLikes(int postId)
     {
-        return context.UserLikesPosts
+        return _context.UserLikesPosts
             .Count(ul => ul.PostId == postId);
     }
 
-    public static bool userHasLikedPost(ApplicationDbContext context, int userId, int postId)
+    public bool userHasLikedPost(int userId, int postId)
     {
         // Checks UserLikesPost for the given user and post IDs
-        return context.UserLikesPosts
+        return _context.UserLikesPosts
             .Any(ulp => ulp.UserId == userId && ulp.PostId == postId);
     }
 
-    public static List<Post> getLatestPostsFromFollowingUserIDs(ApplicationDbContext context,
-        List<int> followingUserIds)
+    public List<Post> getLatestPostsFromFollowingUserIDs(List<int> followingUserIds)
     {
-        return context.Posts
+        return _context.Posts
             .Include(p => p.User)
             .Include(p => p.Likes)
             .Include(p => p.Comments)

@@ -5,7 +5,14 @@ namespace FriendFace.Services.DatabaseService;
 
 public class PostCreateService
 {
-    public static bool CreatePost(ApplicationDbContext context, string content, User sourceUser)
+    private readonly ApplicationDbContext _context;
+    
+    public PostCreateService(ApplicationDbContext context)
+    {
+        _context = context;
+    }
+    
+    public bool CreatePost(string content, User sourceUser)
     {
         if (content.Length > 280)
         {
@@ -20,8 +27,8 @@ public class PostCreateService
                 .UtcNow, // Uses UtcNow, such that the view can calculate the posts createTime in localtime, by comparing local timezone to UTC.
         };
 
-        context.Posts.Add(post);
-        context.SaveChanges();
+        _context.Posts.Add(post);
+        _context.SaveChanges();
 
         return true;
     }

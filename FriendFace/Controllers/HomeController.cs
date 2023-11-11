@@ -14,22 +14,25 @@ namespace FriendFace.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly UserQueryService _userQueryService;
+        private readonly PostQueryService _postQueryService;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserQueryService userQueryService, PostQueryService postQueryService)
         {
             _logger = logger;
             _context = context;
+            _userQueryService = userQueryService;
+            _postQueryService = postQueryService;
         }
 
         public IActionResult Index()
         {
             // !! here we still need to find the user that is logged in, and handle if no user is logged in !!
-            User loggedInUser = UserQueryService.getUser(_context, 1);
+            User loggedInUser = _userQueryService.getUser(1);
             HomeIndexViewModel homeIndexViewModel = new HomeIndexViewModel()
             {
                 User = loggedInUser,
-                PostsInFeed = PostQueryService.getLatestPostsFromFollowingUserIDs(_context,
-                    UserQueryService.getFollowingUserIds(loggedInUser))
+                PostsInFeed = _postQueryService.getLatestPostsFromFollowingUserIDs(_userQueryService.getFollowingUserIds(loggedInUser))
             };
 
             return View(homeIndexViewModel);
@@ -47,7 +50,7 @@ namespace FriendFace.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> LikePost([FromBody] int postId)
+        public async Task<IActionResult> ToggleLikePost([FromBody] int postId)
         {
             var post = await _context.Posts.FindAsync(postId);
 
@@ -56,7 +59,7 @@ namespace FriendFace.Controllers
                 return NotFound();
             }
 
-            var user = UserQueryService.getUser(_context, 1);
+            var user = _userQueryService.getUser(1);
 
             var existingLike =
                 await _context.UserLikesPosts.SingleOrDefaultAsync(like =>
@@ -87,14 +90,14 @@ namespace FriendFace.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPostLikes([FromQuery] int postId)
         {
-            var post = PostQueryService.getPostFromId(_context, postId);
+            var post = _postQueryService.getPostFromId(postId);
 
             if (post == null)
             {
                 return NotFound();
             }
 
-            var user = UserQueryService.getUser(_context, 1);
+            var user = _userQueryService.getUser(1);
 
             var isLiked = post.Likes.Any(like => like.UserId == user.Id);
 

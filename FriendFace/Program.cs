@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FriendFace.Data;
+using FriendFace.Services.DatabaseService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,18 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<CommentCreateService>();
+builder.Services.AddScoped<CommentQueryService>();
+builder.Services.AddScoped<LikeCreateService>();
+builder.Services.AddScoped<LikeDeleteService>();
+builder.Services.AddScoped<LikeQueryService>();
+builder.Services.AddScoped<PostCreateService>();
+builder.Services.AddScoped<PostQueryService>();
+builder.Services.AddScoped<PostUpdateService>();
+builder.Services.AddScoped<UserCreateService>();
+builder.Services.AddScoped<UserQueryService>();
+builder.Services.AddScoped<UserUpdateService>();
 
 var app = builder.Build();
 

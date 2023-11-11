@@ -3,7 +3,7 @@ async function toggleLikeOfPost(heartIcon) {
     console.log('postId:', postId);
 
     try {
-        const response = await fetch('/Home/LikePost', {
+        const response = await fetch('/Home/ToggleLikePost', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

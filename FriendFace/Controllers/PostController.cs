@@ -13,54 +13,59 @@ namespace FriendFace.Controllers;
 public class PostController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly PostQueryService _postQueryService;
+    private readonly PostCreateService _postCreateService;
+    private readonly PostUpdateService _postUpdateService;
 
-    public PostController(ApplicationDbContext context)
+    public PostController(ApplicationDbContext context, PostQueryService postQueryService, PostCreateService postCreateService, PostUpdateService postUpdateService)
     {
-        this._context = context;
+        _context = context;
+        _postQueryService = postQueryService;
+        _postCreateService = postCreateService;
+        _postUpdateService = postUpdateService;
     }
 
     // Queries
-    public Post GetPostFromId(ApplicationDbContext context, int postId)
+    public Post GetPostFromId(int postId)
     {
-        return PostQueryService.getPostFromId(context, postId);
+        return _postQueryService.getPostFromId(postId);
     }
 
-    public int GetNumberOfLikes(ApplicationDbContext context, int postId)
+    public int GetNumberOfLikes(int postId)
     {
-        return PostQueryService.getNumberOfLikes(context, postId);
+        return _postQueryService.getNumberOfLikes(postId);
     }
 
-    public bool UserHasLikedPost(ApplicationDbContext context, int userId, int postId)
+    public bool UserHasLikedPost(int userId, int postId)
     {
-        return PostQueryService.userHasLikedPost(context, userId, postId);
+        return _postQueryService.userHasLikedPost(userId, postId);
     }
 
-    public List<Post> GetLatestPostsFromFollowingUserIDs(ApplicationDbContext context,
-        List<int> followingUserIds)
+    public List<Post> GetLatestPostsFromFollowingUserIDs(List<int> followingUserIds)
     {
-        return PostQueryService.getLatestPostsFromFollowingUserIDs(context, followingUserIds);
+        return _postQueryService.getLatestPostsFromFollowingUserIDs(followingUserIds);
     }
     
     // Creation
-    public bool CreatePost(ApplicationDbContext context, string content, User sourceUser)
+    public bool CreatePost(string content, User sourceUser)
     {
-        return PostCreateService.CreatePost(context, content, sourceUser);
+        return _postCreateService.CreatePost(content, sourceUser);
     }
     
     
     // Updates
-    public void AddLikeToPost(ApplicationDbContext context, int postId, int userId)
+    public void AddLikeToPost(int postId, int userId)
     {
-        PostUpdateService.addLikeToPost(context, postId, userId);
+        _postUpdateService.addLikeToPost(postId, userId);
     }
 
-    public bool UpdatePost(ApplicationDbContext context, int postId, string updatedContent)
+    public bool UpdatePost(int postId, string updatedContent)
     {
-        return PostUpdateService.UpdatePost(context, postId, updatedContent);
+        return _postUpdateService.UpdatePost(postId, updatedContent);
     }
 
-    public bool DeletePost(ApplicationDbContext context, int postId)
+    public bool DeletePost(int postId)
     {
-        return PostUpdateService.DeletePost(context, postId);
+        return _postUpdateService.DeletePost(postId);
     }
 }
