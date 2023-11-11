@@ -24,8 +24,8 @@
                             string heartIcon = GetHeartIcon(isLiked);
                             string heartIconColor = isLiked ? "red" : "inherit";
                         }
-                        <i class="@heartIcon" style="color: @heartIconColor;"></i>
-                        @post.Likes.Count
+                        <i class="@heartIcon" style="color: @heartIconColor; cursor: pointer;" data-post-id="@post.Id" onclick="toggleLikeOfPost(this)"></i>
+                        <span id="likeCount-@post.Id">@post.Likes.Count</span>
                         <i class="far fa-comment"></i> @post.Comments.Count
                     </span>
                 </div>
@@ -36,3 +36,5 @@
         </div>
     </div>
 }
+
+<script src="js/Home/toggleLikeOfPost.js"></script>
