@@ -1,0 +1,38 @@
+@model FriendFace.ViewModels.HomeIndexViewModel
+
+@functions {
+    string GetHeartIcon(bool isLiked) => isLiked ? "fas fa-heart" : "far fa-heart";
+}
+
+@foreach (var post in Model.PostsInFeed)
+{
+    <div class="col-md-6 offset-md-3 mb-3">
+        <div class="card">
+            <div class="card-body">
+                @* Name, Username and post content *@
+                <span style="font-weight: bold;">@post.User.FirstName @Html.Raw(" ") @post.User.LastName</span>
+                <span style="font-size: 80%;" class="text-muted">@Html.Raw("@")@post.User.Username</span>
+                <p class="card-text text-left">@post.Content</p>
+
+                @* Date and icons *@
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">@post.Time.ToString("HH:mm dd/MM/yy")</small>
+
+                    <span style="font-size: 80%;" class="text-muted">
+                        @{
+                            bool isLiked = post.Likes.Any(like => like.UserId == Model.User.Id);
+                            string heartIcon = GetHeartIcon(isLiked);
+                            string heartIconColor = isLiked ? "red" : "inherit";
+                        }
+                        <i class="@heartIcon" style="color: @heartIconColor;"></i>
+                        @post.Likes.Count
+                        <i class="far fa-comment"></i> @post.Comments.Count
+                    </span>
+                </div>
+
+                @* Comments *@
+                <partial name="_CommentPartial" model="post.Comments"/>
+            </div>
+        </div>
+    </div>
+}
