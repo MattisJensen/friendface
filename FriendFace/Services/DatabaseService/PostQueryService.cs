@@ -35,6 +35,7 @@ public class PostQueryService
             .Include(p => p.User)
             .Include(p => p.Likes)
             .Include(p => p.Comments)
+            .ThenInclude(c => c.User)
             .Where(p => followingUserIds.Contains(p.UserId))
             .OrderByDescending(p => p.Time)
             .ToList();
