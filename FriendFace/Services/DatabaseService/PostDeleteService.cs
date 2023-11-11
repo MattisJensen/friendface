@@ -12,15 +12,56 @@ public class PostDeleteService
     }
     
     // removes like from post
-    public void removeLikeFromPost(int postId, int userId)
+    public bool RemoveLikeFromPost(int postId, int userId)
     {
         var existingLike = _context.UserLikesPosts.SingleOrDefault(like =>
             like.UserId == userId && like.PostId == postId);
 
-        if (existingLike != null)
+        if (existingLike == null) return false;
+        
+        try
         {
             _context.UserLikesPosts.Remove(existingLike);
             _context.SaveChanges();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+    
+    public bool SoftDeletePost(int postId)
+    {
+        var post = _context.Posts.SingleOrDefault(p => p.Id == postId);
+        if (post == null) return false;
+        
+        try
+        {
+            post.IsDeleted = true;
+            _context.SaveChanges();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+    
+    public bool UndoDeletePost(int postId)
+    {
+        var post = _context.Posts.FirstOrDefault(p => p.Id == postId);
+        if (post == null) return false;
+        
+        try
+        {
+            post.IsDeleted = false;
+            _context.SaveChanges();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
         }
     }
 }

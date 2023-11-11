@@ -11,8 +11,13 @@ public class UserQueryService
     {
         _context = context;
     }
+
+    public User GetLoggedInUser()
+    {
+        return GetUserById(1);
+    }
     
-    public User getUser(int userId)
+    public User GetUserById(int userId)
     {
         return _context.Users
             .Include(u => u.Following) // Load the users UserA follows
@@ -20,7 +25,7 @@ public class UserQueryService
             .FirstOrDefault(u => u.Id == userId);
     }
     
-    public List<int> getFollowingUserIds(User user)
+    public List<int> GetFollowingUserIds(User user)
     {
         return user.Following.Select(f => f.FollowingId).ToList();
     }

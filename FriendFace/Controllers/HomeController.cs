@@ -38,15 +38,14 @@ namespace FriendFace.Controllers
         public IActionResult Index()
         {
             // !! here we still need to find the user that is logged in, and handle if no user is logged in !!
-            User loggedInUser = _userQueryService.getUser(1);
-            HomeIndexViewModel homeIndexViewModel = new HomeIndexViewModel()
+            var loggedInUser = _userQueryService.GetLoggedInUser();
+            var homeIndexViewModel = new HomeIndexViewModel()
             {
                 User = loggedInUser,
                 PostsInFeed =
-                    _postQueryService.getLatestPostsFromFollowingUserIDs(
-                        _userQueryService.getFollowingUserIds(loggedInUser))
+                    _postQueryService.GetLatestPostsFromFollowingUserIDs(
+                        _userQueryService.GetFollowingUserIds(loggedInUser))
             };
-
             return View(homeIndexViewModel);
         }
 
@@ -64,21 +63,21 @@ namespace FriendFace.Controllers
         [HttpPost]
         public async Task<IActionResult> ToggleLikePost([FromBody] int postId)
         {
-            var post = _postQueryService.getPostFromId(postId);
+            var post = _postQueryService.GetPostFromId(postId);
 
             if (post == null) return NotFound();
 
-            var user = _userQueryService.getUser(1);
-            var existingLike = _postQueryService.hasUserLikedPost(user.Id, postId);
+            var user = _userQueryService.GetLoggedInUser();
+            var existingLike = _postQueryService.HasUserLikedPost(user.Id, postId);
 
             if (existingLike)
             {
                 // If a like by the user already exists, remove it
-                _postDeleteService.removeLikeFromPost(postId, user.Id);
+                _postDeleteService.RemoveLikeFromPost(postId, user.Id);
             }
             else
             {
-                _postCreateService.addLikeToPost(postId, user.Id);
+                _postCreateService.AddLikeToPost(postId, user.Id);
             }
 
             return Ok();
@@ -87,15 +86,15 @@ namespace FriendFace.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPostLikes([FromQuery] int postId)
         {
-            var post = _postQueryService.getPostFromId(postId);
+            var post = _postQueryService.GetPostFromId(postId);
 
             if (post == null) return NotFound();
 
-            var user = _userQueryService.getUser(1);
+            var user = _userQueryService.GetLoggedInUser();
 
-            var isLiked = _postQueryService.hasUserLikedPost(user.Id, postId);
+            var isLiked = _postQueryService.HasUserLikedPost(user.Id, postId);
 
-            var likeCount = post.Likes.Count;
+            var likeCount = _postQueryService.GetNumberOfLikes(postId);
 
             return Json(new { likeCount = likeCount, isLiked = isLiked });
         }
