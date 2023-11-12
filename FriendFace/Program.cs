@@ -26,6 +26,7 @@ builder.Services.AddScoped<PostUpdateService>();
 builder.Services.AddScoped<UserCreateService>();
 builder.Services.AddScoped<UserQueryService>();
 builder.Services.AddScoped<UserUpdateService>();
+builder.Services.AddScoped<PostService>();
 
 var app = builder.Build();
 
@@ -47,6 +48,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapRazorPages();
 
 app.Run();

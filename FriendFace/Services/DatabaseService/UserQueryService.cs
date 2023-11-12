@@ -22,13 +22,12 @@ public class UserQueryService
         return _context.Users
             .Include(u => u.Following) // Load the users UserA follows
             .Include(u => u.Followers) // Load the users following UserA
-            .FirstOrDefault(u => u.Id == userId);
+            .FirstOrDefault(u => u.Id == userId) ?? throw new InvalidOperationException();
     }
     
-    public List<int> GetFollowingUserIds(User user)
+    public List<int> GetFollowingUserIds(int userId)
     {
+        var user = GetUserById(userId);
         return user.Following.Select(f => f.FollowingId).ToList();
     }
-    
-    
 }

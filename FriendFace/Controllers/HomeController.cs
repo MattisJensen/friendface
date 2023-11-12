@@ -6,6 +6,7 @@ using FriendFace.ViewModels;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using FriendFace.Services.DatabaseService;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 
 namespace FriendFace.Controllers
@@ -19,12 +20,13 @@ namespace FriendFace.Controllers
         private readonly PostQueryService _postQueryService;
         private readonly PostDeleteService _postDeleteService;
         private readonly PostCreateService _postCreateService;
-
+        
+        private readonly PostService _postService;
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context,
             UserQueryService userQueryService, PostQueryService postQueryService,
             PostDeleteService postDeleteService, PostCreateService postCreateService,
-            UserCreateService userCreateService)
+            UserCreateService userCreateService, PostService postService)
         {
             _logger = logger;
             _context = context;
@@ -33,18 +35,18 @@ namespace FriendFace.Controllers
             _postQueryService = postQueryService;
             _postDeleteService = postDeleteService;
             _postCreateService = postCreateService;
+            
+            _postService = postService;
         }
 
         public IActionResult Index()
         {
             // !! here we still need to find the user that is logged in, and handle if no user is logged in !!
-            var loggedInUser = _userQueryService.GetLoggedInUser();
+            User loggedInUser = _userQueryService.GetLoggedInUser();
             var homeIndexViewModel = new HomeIndexViewModel()
             {
                 User = loggedInUser,
-                PostsInFeed =
-                    _postQueryService.GetLatestPostsFromFollowingUserIDs(
-                        _userQueryService.GetFollowingUserIds(loggedInUser))
+                PostsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id)
             };
             return View(homeIndexViewModel);
         }
@@ -61,42 +63,17 @@ namespace FriendFace.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ToggleLikePost([FromBody] int postId)
+        public IActionResult ToggleLikePost([FromBody] int postId)
         {
-            var post = _postQueryService.GetPostFromId(postId);
-
-            if (post == null) return NotFound();
-
-            var user = _userQueryService.GetLoggedInUser();
-            var existingLike = _postQueryService.HasUserLikedPost(user.Id, postId);
-
-            if (existingLike)
-            {
-                // If a like by the user already exists, remove it
-                _postDeleteService.RemoveLikeFromPost(postId, user.Id);
-            }
-            else
-            {
-                _postCreateService.AddLikeToPost(postId, user.Id);
-            }
-
+            _postService.ToggleLikePost(postId);
             return Ok();
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPostLikes([FromQuery] int postId)
+        public IActionResult GetPostLikes([FromQuery] int postId)
         {
-            var post = _postQueryService.GetPostFromId(postId);
-
-            if (post == null) return NotFound();
-
-            var user = _userQueryService.GetLoggedInUser();
-
-            var isLiked = _postQueryService.HasUserLikedPost(user.Id, postId);
-
-            var likeCount = _postQueryService.GetNumberOfLikes(postId);
-
-            return Json(new { likeCount = likeCount, isLiked = isLiked });
+            var result = _postService.GetPostLikes(postId);
+            return Json(result);
         }
     }
 }

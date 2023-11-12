@@ -19,7 +19,20 @@ public class PostQueryService
             .Include(p => p.User)
             .Include(p => p.Likes)
             .Include(p => p.Comments)
-            .FirstOrDefault(p => p.Id == postId);
+            .FirstOrDefault(p => p.Id == postId) ?? throw new NullReferenceException();
+    }
+    
+    public List<Post> GetPostsFromUserId(int userId)
+    {
+        return _context.Posts
+            .Include(p => p.User)
+            .Include(p => p.Likes)
+            .Include(p => p.Comments)
+            .ThenInclude(c => c.User)
+            .Where(p => p.UserId == userId)
+            .Where(p => !p.IsDeleted)
+            .OrderByDescending(p => p.Time)
+            .ToList();
     }
 
     public int GetNumberOfLikes(int postId)
@@ -34,15 +47,21 @@ public class PostQueryService
         return existingLike != null;
     }
 
-    public List<Post> GetLatestPostsFromFollowingUserIDs(List<int> followingUserIds)
+    public List<Post> GetLatestPostsFromFeed(int userId)
     {
+        return GetPostsFromUserId(userId);
+        var usq = new UserQueryService(_context);
+        var followingUserIds = usq.GetFollowingUserIds(userId);
+            
         return _context.Posts
             .Include(p => p.User)
             .Include(p => p.Likes)
             .Include(p => p.Comments)
             .ThenInclude(c => c.User)
             .Where(p => followingUserIds.Contains(p.UserId))
+            .Where(p => !p.IsDeleted)
             .OrderByDescending(p => p.Time)
             .ToList();
     }
+    
 }
