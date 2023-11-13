@@ -20,7 +20,7 @@ public class PostService
         _userQueryService = userQueryService;
     }
 
-     public void ToggleLikePost(int postId)
+    public void ToggleLikePost(int postId)
     {
         var post = _postQueryService.GetPostFromId(postId);
 
@@ -66,6 +66,36 @@ public class PostService
         catch (Exception ex)
         {
             throw new Exception("An error occurred while retrieving post likes", ex);
+        }
+    }
+
+    public object DeletePost(int postId)
+    {
+        try
+        {
+            // Check if the logged-in user is the owner of the post
+            var loggedInUser = _userQueryService.GetLoggedInUser();
+            var post = _postQueryService.GetPostFromId(postId);
+
+            if (post.UserId == loggedInUser.Id)
+            {
+                if (_postDeleteService.SoftDeletePost(postId))
+                {
+                    return new { success = true };
+                }
+                else
+                {
+                    return new { success = false, message = "An error occurred while deleting the post." };
+                }
+            }
+            else
+            {
+                return new { success = false, message = "You do not have permission to delete this post." };
+            }
+        }
+        catch (Exception ex)
+        {
+            return new { success = false, message = "An error occurred while deleting the post." };
         }
     }
 }

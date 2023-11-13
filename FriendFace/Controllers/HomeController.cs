@@ -20,7 +20,7 @@ namespace FriendFace.Controllers
         private readonly PostQueryService _postQueryService;
         private readonly PostDeleteService _postDeleteService;
         private readonly PostCreateService _postCreateService;
-        
+
         private readonly PostService _postService;
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context,
@@ -35,7 +35,7 @@ namespace FriendFace.Controllers
             _postQueryService = postQueryService;
             _postDeleteService = postDeleteService;
             _postCreateService = postCreateService;
-            
+
             _postService = postService;
         }
 
@@ -43,10 +43,12 @@ namespace FriendFace.Controllers
         {
             // !! here we still need to find the user that is logged in, and handle if no user is logged in !!
             User loggedInUser = _userQueryService.GetLoggedInUser();
+            var postsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id);
+
             var homeIndexViewModel = new HomeIndexViewModel()
             {
                 User = loggedInUser,
-                PostsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id)
+                PostsInFeed = postsInFeed,
             };
             return View(homeIndexViewModel);
         }
@@ -75,5 +77,14 @@ namespace FriendFace.Controllers
             var result = _postService.GetPostLikes(postId);
             return Json(result);
         }
+        
+        [HttpPost]
+        public IActionResult DeletePost([FromBody] int postId)
+        {
+            var result = _postService.DeletePost(postId);
+            return Json(result);
+            
+        }
+
     }
 }

@@ -1,0 +1,14 @@
+@model Post
+
+<div class="dropdown">
+    <button class="btn btn-sm shadow-none" type="button" id="postMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-v"></i>
+    </button>
+    <div class="dropdown-menu " aria-labelledby="postMenuButton">
+        <a class="dropdown-item" href="#" onclick="editPost(@Model.Id)">Edit</a>
+        <a id="deleteField-@Model.Id" class="dropdown-item" href="#" onclick="deletePost(@Model.Id)">Delete</a>
+    </div>
+</div>
+
+<script src="js/Home/deletePost.js"></script>
+<script src="js/Home/editPost.js"></script>
