@@ -41,7 +41,6 @@ namespace FriendFace.Controllers
 
         public IActionResult Index()
         {
-            // !! here we still need to find the user that is logged in, and handle if no user is logged in !!
             User loggedInUser = _userQueryService.GetLoggedInUser();
             var postsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id);
 
@@ -77,14 +76,19 @@ namespace FriendFace.Controllers
             var result = _postService.GetPostLikes(postId);
             return Json(result);
         }
-        
+
         [HttpPost]
         public IActionResult DeletePost([FromBody] int postId)
         {
             var result = _postService.DeletePost(postId);
             return Json(result);
-            
         }
 
+        [HttpPost]
+        public IActionResult EditPost([FromBody] EditPostViewModel model)
+        {
+            var result = _postService.EditPost(model);
+            return Json(result);
+        }
     }
 }

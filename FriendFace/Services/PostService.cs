@@ -1,6 +1,7 @@
 using FriendFace.Data;
 using FriendFace.Models;
 using FriendFace.Services.DatabaseService;
+using FriendFace.ViewModels;
 
 public class PostService
 {
@@ -96,6 +97,40 @@ public class PostService
         catch (Exception ex)
         {
             return new { success = false, message = "An error occurred while deleting the post." };
+        }
+    }
+
+    public object EditPost(EditPostViewModel model)
+    {
+        try
+        {
+            int postId = model.PostId;
+            string editedContent = model.EditedContent;
+
+            // Check if the logged-in user is the owner of the post
+            var loggedInUser = _userQueryService.GetLoggedInUser();
+            var post = _postQueryService.GetPostFromId(postId);
+
+            if (post.UserId == loggedInUser.Id)
+            {
+                // Check if the edited content is within the character limit
+                if (editedContent.Length <= 280)
+                {
+                    return new { success = _postUpdateService.UpdatePost(postId, editedContent)};
+                }
+                else
+                {
+                    return new { success = false, message = "Edited content exceeds 280 characters." };
+                }
+            }
+            else
+            {
+                return new { success = false, message = "You do not have permission to edit this post." };
+            }
+        }
+        catch (Exception ex)
+        {
+            return new { success = false, message = "An error occurred while editing the post." };
         }
     }
 }

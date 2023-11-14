@@ -12,26 +12,6 @@ public class PostUpdateService
         _context = context;
     }
 
-    public bool AddLikeToPost(int postId, int userId)
-    {
-        try
-        {
-            var like = new UserLikesPost
-            {
-                PostId = postId,
-                UserId = userId
-            };
-
-            _context.UserLikesPosts.Add(like);
-            _context.SaveChanges();
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }
-
     public bool UpdatePost(int postId, string updatedContent)
     {
         if (_context.Posts.Find(postId) == null) throw new KeyNotFoundException();
@@ -42,8 +22,6 @@ public class PostUpdateService
 
             var post = orgPost;
             post.Content = updatedContent;
-
-            _context.Posts.Add(post);
             _context.SaveChanges();
             return true;
         }

@@ -27,7 +27,7 @@ function deletePost(postId) {
             data: JSON.stringify(postId),
             dataType: 'json',
             success: function (data) {
-                $('#post-' + postId).remove();
+                $('#postContainer-' + postId).remove();
             },
             error: function () {
                 console.error('Error deleting post.');
