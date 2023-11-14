@@ -1,57 +1,67 @@
 function editPost(postId) {
-    
-    // Make the post content editable
-    let postContentItem = $('#postContent-' + postId);
-    postContentItem.attr('contenteditable', true);
-    postContentItem.css({
-        'background-color': 'rgb(231,231,231)',
-        'border-radius': '5px',
-        'padding': '10px',
-        'outline': '0'
-    });
+    $.ajax({
+        type: "GET",
+        url: "/Home/GetPostCharLimit", 
+        success: function (data) {
+            var postCharacterLimit = data;
 
-    $('#postMenuButton-' + postId).hide();
+            // Make the post content editable
+            let postContentItem = $('#postContent-' + postId);
+            postContentItem.attr('contenteditable', true);
+            postContentItem.css({
+                'background-color': 'rgb(231,231,231)',
+                'border-radius': '5px',
+                'padding': '10px',
+                'outline': '0'
+            });
 
-    // Save the original post content in case the user cancels the edit
-    let originalPostContent = postContentItem.text();
+            $('#postMenuButton-' + postId).hide();
 
-    // Create save & cancel button
-    var saveButton = $('<button>', {
-        id: 'saveButton-' + postId,
-        text: 'Save',
-        class: 'btn btn-success btn-sm mt-2 me-2',
-        click: function () {
-            savePost(postId);
+            // Save the original post content in case the user cancels the edit
+            let originalPostContent = postContentItem.text();
+
+            // Create save & cancel button
+            var saveButton = $('<button>', {
+                id: 'saveButton-' + postId,
+                text: 'Save',
+                class: 'btn btn-success btn-sm mt-2 me-2 mb-4',
+                click: function () {
+                    savePost(postId);
+                }
+            });
+
+            var cancelButton = $('<button>', {
+                id: 'cancelButton-' + postId,
+                text: 'Cancel',
+                class: 'btn btn-secondary btn-sm mt-2 mb-4',
+                click: function () {
+                    leaveEditMode(postId, originalPostContent);
+                }
+            });
+
+            var charCountText = $('<span>', {
+                id: 'charCount-' + postId,
+                text: postContentItem.text().length + '/' + postCharacterLimit + ' chars',
+                class: 'text-muted small d-flex'
+            });
+            
+            postContentItem.on('input', function () {
+                // Update character count text
+                charCountText.text(postContentItem.text().length + '/' + postCharacterLimit + ' chars ');
+
+                // Disable save button if content length exceeds char limit
+                saveButton.prop('disabled', postContentItem.text().length > postCharacterLimit);
+            });
+
+            // Add objects to post (adding order matters)
+            postContentItem.after(cancelButton);
+            postContentItem.after(saveButton);
+            postContentItem.after(charCountText);
+        },
+        error: function (error) {
+            console.error("Error fetching post character limit: ", error);
         }
     });
-
-    var cancelButton = $('<button>', {
-        id: 'cancelButton-' + postId,
-        text: 'Cancel',
-        class: 'btn btn-secondary btn-sm mt-2 me-2',
-        click: function () {
-            leaveEditMode(postId, originalPostContent);
-        }
-    });
-
-    var charCountText = $('<span>', {
-        id: 'charCount-' + postId,
-        text: postContentItem.text().length + '/280 chars',
-        class: 'text-muted small d-flex align-items-left'
-    });
-
-    postContentItem.on('input', function () {
-        // Update character count text
-        charCountText.text(postContentItem.text().length + '/280 chars');
-
-        // Disable save button if content length exceeds 280 characters
-        saveButton.prop('disabled', postContentItem.text().length > 280);
-    });
-
-    // Append save & cancel button
-    $('#postContainer-' + postId).append(saveButton);
-    $('#postContainer-' + postId).append(cancelButton);
-    $('#postContainer-' + postId).append(charCountText);
 }
 
 function savePost(postId, originalPostContent) {
@@ -61,7 +71,7 @@ function savePost(postId, originalPostContent) {
         PostId: postId,
         EditedContent: editedContent
     };
-    
+
     // AJAX request to save the edited content
     $.ajax({
         url: '/Home/EditPost',
@@ -84,12 +94,12 @@ function savePost(postId, originalPostContent) {
 }
 
 function leaveEditMode(postId, originalPostContent) {
+    let postContentItem = $('#postContent-' + postId);
     $('#postMenuButton-' + postId).show();
     $('#saveButton-' + postId).remove();
     $('#cancelButton-' + postId).remove();
     $('#charCount-' + postId).remove();
 
-    let postContentItem = $('#postContent-' + postId);
     postContentItem.attr('contenteditable', false);
     postContentItem.css({
         'background-color': '',

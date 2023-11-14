@@ -12,6 +12,16 @@ public class PostQueryService
     {
         _context = context;
     }
+    
+    public int GetPostCharacterLimit()
+    {
+        var entityType = _context.Model.FindEntityType(typeof(Post));
+        var property = entityType.FindProperty(nameof(Post.Content));
+
+        var maxLength = property.GetMaxLength();
+
+        return maxLength ?? 0; // Return 0 if no max length is defined
+    }
 
     public Post GetPostFromId(int postId)
     {
@@ -46,6 +56,7 @@ public class PostQueryService
 
         return existingLike != null;
     }
+    
 
     public List<Post> GetLatestPostsFromFeed(int userId)
     {

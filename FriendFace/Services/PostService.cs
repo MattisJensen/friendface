@@ -114,9 +114,9 @@ public class PostService
             if (post.UserId == loggedInUser.Id)
             {
                 // Check if the edited content is within the character limit
-                if (editedContent.Length <= 280)
+                if (editedContent.Length <= _postQueryService.GetPostCharacterLimit())
                 {
-                    return new { success = _postUpdateService.UpdatePost(postId, editedContent)};
+                    return new { success = _postUpdateService.UpdatePost(postId, editedContent) };
                 }
                 else
                 {
