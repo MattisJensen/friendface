@@ -5,18 +5,29 @@ namespace FriendFace.Services.DatabaseService;
 
 public class UserQueryService
 {
-    public static User getUser(ApplicationDbContext context, int userId)
+    private readonly ApplicationDbContext _context;
+    
+    public UserQueryService(ApplicationDbContext context)
     {
-        return context.Users
+        _context = context;
+    }
+
+    public User GetLoggedInUser()
+    {
+        return GetUserById(1);
+    }
+    
+    public User GetUserById(int userId)
+    {
+        return _context.Users
             .Include(u => u.Following) // Load the users UserA follows
             .Include(u => u.Followers) // Load the users following UserA
-            .FirstOrDefault(u => u.Id == userId);
+            .FirstOrDefault(u => u.Id == userId) ?? throw new InvalidOperationException();
     }
     
-    public static List<int> getFollowingUserIds(User user)
+    public List<int> GetFollowingUserIds(int userId)
     {
+        var user = GetUserById(userId);
         return user.Following.Select(f => f.FollowingId).ToList();
     }
-    
-    
 }

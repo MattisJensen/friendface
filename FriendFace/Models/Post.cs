@@ -17,6 +17,9 @@ public class Post
     [Required]
     public DateTime Time { get; set; }
 
+    [Required]
+    public bool IsDeleted { get; set; }
+
     [ForeignKey("UserId")]
     public int UserId { get; set; }
 

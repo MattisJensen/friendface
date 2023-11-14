@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FriendFace.Data;
 using FriendFace.Areas.Identity.Data;
+using FriendFace.Services.DatabaseService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,17 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<CommentCreateService>();
+builder.Services.AddScoped<CommentQueryService>();
+builder.Services.AddScoped<PostDeleteService>();
+builder.Services.AddScoped<PostCreateService>();
+builder.Services.AddScoped<PostQueryService>();
+builder.Services.AddScoped<PostUpdateService>();
+builder.Services.AddScoped<UserCreateService>();
+builder.Services.AddScoped<UserQueryService>();
+builder.Services.AddScoped<UserUpdateService>();
+builder.Services.AddScoped<PostService>();
 
 var app = builder.Build();
 
@@ -40,6 +52,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapRazorPages();
 
 app.Run();

@@ -1,0 +1,10 @@
+@model Post
+
+<form id="editPostForm">
+    <div class="form-group">
+        <textarea class="form-control" rows="3" id="editedContent">@Model.Content</textarea>
+    </div>
+    <button type="button" class="btn btn-primary" onclick="saveEditedPost(@Model.Id)">Save</button>
+</form>
+
+<script src="js/Home/saveEditedPost.js"></script>

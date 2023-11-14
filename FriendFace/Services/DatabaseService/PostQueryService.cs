@@ -6,37 +6,62 @@ namespace FriendFace.Services.DatabaseService;
 
 public class PostQueryService
 {
-    public static Post getPostFromId(ApplicationDbContext context, int postId)
+    private readonly ApplicationDbContext _context;
+
+    public PostQueryService(ApplicationDbContext context)
     {
-        return context.Posts
+        _context = context;
+    }
+
+    public Post GetPostFromId(int postId)
+    {
+        return _context.Posts
             .Include(p => p.User)
             .Include(p => p.Likes)
             .Include(p => p.Comments)
-            .FirstOrDefault(p => p.Id == postId);
+            .FirstOrDefault(p => p.Id == postId) ?? throw new NullReferenceException();
     }
-
-    public static int getNumberOfLikes(ApplicationDbContext context, int postId)
+    
+    public List<Post> GetPostsFromUserId(int userId)
     {
-        return context.UserLikesPosts
-            .Count(ul => ul.PostId == postId);
-    }
-
-    public static bool userHasLikedPost(ApplicationDbContext context, int userId, int postId)
-    {
-        // Checks UserLikesPost for the given user and post IDs
-        return context.UserLikesPosts
-            .Any(ulp => ulp.UserId == userId && ulp.PostId == postId);
-    }
-
-    public static List<Post> getLatestPostsFromFollowingUserIDs(ApplicationDbContext context,
-        List<int> followingUserIds)
-    {
-        return context.Posts
+        return _context.Posts
             .Include(p => p.User)
             .Include(p => p.Likes)
             .Include(p => p.Comments)
-            .Where(p => followingUserIds.Contains(p.UserId))
+            .ThenInclude(c => c.User)
+            .Where(p => p.UserId == userId)
+            .Where(p => !p.IsDeleted)
             .OrderByDescending(p => p.Time)
             .ToList();
     }
+
+    public int GetNumberOfLikes(int postId)
+    {
+        return _context.UserLikesPosts.Count(ul => ul.PostId == postId);
+    }
+
+    public bool HasUserLikedPost(int userId, int postId)
+    {
+        var existingLike = _context.UserLikesPosts.SingleOrDefault(like => like.UserId == userId && like.PostId == postId);
+
+        return existingLike != null;
+    }
+
+    public List<Post> GetLatestPostsFromFeed(int userId)
+    {
+        return GetPostsFromUserId(userId);
+        var usq = new UserQueryService(_context);
+        var followingUserIds = usq.GetFollowingUserIds(userId);
+            
+        return _context.Posts
+            .Include(p => p.User)
+            .Include(p => p.Likes)
+            .Include(p => p.Comments)
+            .ThenInclude(c => c.User)
+            .Where(p => followingUserIds.Contains(p.UserId))
+            .Where(p => !p.IsDeleted)
+            .OrderByDescending(p => p.Time)
+            .ToList();
+    }
+    
 }
