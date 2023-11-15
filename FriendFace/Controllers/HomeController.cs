@@ -97,5 +97,12 @@ namespace FriendFace.Controllers
             var result = _postQueryService.GetPostCharacterLimit();
             return Json(result);
         }
+        
+        [HttpPost]
+        public IActionResult CreatePost([FromBody] string content)
+        {
+            var result = _postService.CreatePost(content);
+            return Json(result);
+        }
     }
 }

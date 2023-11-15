@@ -23,9 +23,9 @@ public class PostCreateService
             var post = new Post
             {
                 Content = content,
-                User = sourceUser,
-                Time = DateTime
-                    .UtcNow, // Uses UtcNow, such that the view can calculate the posts createTime in localtime, by comparing local timezone to UTC.
+                Time = DateTime.UtcNow, // Uses UtcNow, such that the view can calculate the posts createTime in localtime, by comparing local timezone to UTC.
+                IsDeleted = false,
+                UserId = sourceUser.Id
             };
 
             _context.Posts.Add(post);

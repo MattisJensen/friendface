@@ -120,7 +120,7 @@ public class PostService
                 }
                 else
                 {
-                    return new { success = false, message = "Edited content exceeds 280 characters." };
+                    return new { success = false, message = "Edited content exceeds " + _postQueryService.GetPostCharacterLimit() + " characters." };
                 }
             }
             else
@@ -131,6 +131,41 @@ public class PostService
         catch (Exception ex)
         {
             return new { success = false, message = "An error occurred while editing the post." };
+        }
+    }
+    
+    public object CreatePost(string content)
+    {
+        try
+        {
+            // Check if the logged-in user is the owner of the post
+            var loggedInUser = _userQueryService.GetLoggedInUser();
+
+            if (loggedInUser != null && loggedInUser.Id > 0)
+            {
+                // Check if the edited content is within the character limit
+                if (content.Length <= _postQueryService.GetPostCharacterLimit())
+                {
+                    return new { success = _postCreateService.CreatePost(content, loggedInUser) };
+                }
+                else
+                {
+                    return new { success = false, message = "Content exceeds " + _postQueryService.GetPostCharacterLimit() + " characters." };
+                }
+            }
+            else
+            {
+                return new { success = false, message = "You do not have permission to create this post." };
+            }
+            {
+                
+            }
+            
+            
+        }
+        catch (Exception ex)
+        {
+            return new { success = false, message = "An error occurred while creating the post." };
         }
     }
 }
