@@ -41,7 +41,7 @@ namespace FriendFace.Controllers
 
         public IActionResult Index()
         {
-            User loggedInUser = _userQueryService.GetLoggedInUser();
+            var loggedInUser = _userQueryService.GetLoggedInUser();
             var postsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id);
 
             var homeIndexViewModel = new HomeIndexViewModel()
@@ -88,6 +88,20 @@ namespace FriendFace.Controllers
         public IActionResult EditPost([FromBody] EditPostViewModel model)
         {
             var result = _postService.EditPost(model);
+            return Json(result);
+        }
+
+        [HttpGet]
+        public IActionResult GetPostCharLimit()
+        {
+            var result = _postQueryService.GetPostCharacterLimit();
+            return Json(result);
+        }
+        
+        [HttpPost]
+        public IActionResult CreatePost([FromBody] string content)
+        {
+            var result = _postService.CreatePost(content);
             return Json(result);
         }
     }

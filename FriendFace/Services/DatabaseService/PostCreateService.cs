@@ -6,24 +6,26 @@ namespace FriendFace.Services.DatabaseService;
 public class PostCreateService
 {
     private readonly ApplicationDbContext _context;
+    private readonly PostQueryService _postQueryService;
 
     public PostCreateService(ApplicationDbContext context)
     {
         _context = context;
+        _postQueryService = new PostQueryService(_context);
     }
 
     public bool CreatePost(string content, User sourceUser)
     {
-        if (content.Length > 280) throw new Exception("Post content string too long.");
+        if (content.Length > _postQueryService.GetPostCharacterLimit()) throw new Exception("Post content string too long.");
 
         try
         {
             var post = new Post
             {
                 Content = content,
-                User = sourceUser,
-                Time = DateTime
-                    .UtcNow, // Uses UtcNow, such that the view can calculate the posts createTime in localtime, by comparing local timezone to UTC.
+                Time = DateTime.UtcNow, // Uses UtcNow, such that the view can calculate the posts createTime in localtime, by comparing local timezone to UTC.
+                IsDeleted = false,
+                UserId = sourceUser.Id
             };
 
             _context.Posts.Add(post);

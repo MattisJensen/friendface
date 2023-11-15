@@ -7,10 +7,24 @@ namespace FriendFace.Services.DatabaseService;
 public class PostQueryService
 {
     private readonly ApplicationDbContext _context;
+    private int? _postCharacterLimit;
 
     public PostQueryService(ApplicationDbContext context)
     {
         _context = context;
+    }
+    
+    public int GetPostCharacterLimit()
+    {
+        // If the character limit has already been calculated before, return it
+        if (_postCharacterLimit != null) return _postCharacterLimit ?? 0;
+        
+        var entityType = _context.Model.FindEntityType(typeof(Post));
+        var property = entityType.FindProperty(nameof(Post.Content));
+
+        _postCharacterLimit = property.GetMaxLength();
+
+        return _postCharacterLimit ?? 0; // Return 0 if no max length is defined
     }
 
     public Post GetPostFromId(int postId)
@@ -46,10 +60,11 @@ public class PostQueryService
 
         return existingLike != null;
     }
+    
 
     public List<Post> GetLatestPostsFromFeed(int userId)
     {
-        return GetPostsFromUserId(userId);
+        // return GetPostsFromUserId(userId);
         var usq = new UserQueryService(_context);
         var followingUserIds = usq.GetFollowingUserIds(userId);
             
