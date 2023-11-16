@@ -5,6 +5,7 @@ using FriendFace.Data;
 using FriendFace.ViewModels;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using FriendFace.Services;
 using FriendFace.Services.DatabaseService;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +21,14 @@ namespace FriendFace.Controllers
         private readonly PostQueryService _postQueryService;
         private readonly PostDeleteService _postDeleteService;
         private readonly PostCreateService _postCreateService;
-
+        
+        private readonly CommentService _commentService;
         private readonly PostService _postService;
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context,
             UserQueryService userQueryService, PostQueryService postQueryService,
             PostDeleteService postDeleteService, PostCreateService postCreateService,
-            UserCreateService userCreateService, PostService postService)
+            UserCreateService userCreateService, PostService postService, CommentService commentService)
         {
             _logger = logger;
             _context = context;
@@ -37,6 +39,8 @@ namespace FriendFace.Controllers
             _postCreateService = postCreateService;
 
             _postService = postService;
+
+            _commentService = commentService;
         }
 
         public IActionResult Index()
@@ -102,6 +106,13 @@ namespace FriendFace.Controllers
         public IActionResult CreatePost([FromBody] string content)
         {
             var result = _postService.CreatePost(content);
+            return Json(result);
+        }
+        
+        [HttpPost]
+        public IActionResult CreateComment([FromBody] string content, [FromQuery] int postId)
+        {
+            var result = _commentService.CreateComment(content, postId);
             return Json(result);
         }
     }
