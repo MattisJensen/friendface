@@ -14,9 +14,9 @@ public class CommentCreateService
         _postQueryService = new PostQueryService(context);
     }
 
-    public bool CreateCommment(string content, int postId, User sourceUser)
+    public bool CreateComment(string content, int postId, User sourceUser)
     {
-        const int maxSize = 280;
+        int maxSize = _postQueryService.GetPostCharacterLimit();
         if (content.Length > maxSize) throw new Exception("Comment content too long.");
 
         try
