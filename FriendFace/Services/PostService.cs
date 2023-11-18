@@ -2,6 +2,11 @@ using FriendFace.Data;
 using FriendFace.Models;
 using FriendFace.Services.DatabaseService;
 using FriendFace.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 public class PostService
 {
@@ -120,7 +125,11 @@ public class PostService
                 }
                 else
                 {
-                    return new { success = false, message = "Edited content exceeds " + _postQueryService.GetPostCharacterLimit() + " characters." };
+                    return new
+                    {
+                        success = false,
+                        message = "Edited content exceeds " + _postQueryService.GetPostCharacterLimit() + " characters."
+                    };
                 }
             }
             else
@@ -133,8 +142,8 @@ public class PostService
             return new { success = false, message = "An error occurred while editing the post." };
         }
     }
-    
-    public object CreatePost(string content)
+
+    public string CreatePost(string content, ControllerContext controllerContext)
     {
         try
         {
@@ -144,23 +153,65 @@ public class PostService
             if (loggedInUser != null && loggedInUser.Id > 0)
             {
                 // Check if the edited content is within the character limit
-                if (content.Length <= _postQueryService.GetPostCharacterLimit())
+                if (content.Length <= _postQueryService.GetPostCharacterLimit() &&
+                    _postCreateService.CreatePost(content, loggedInUser))
                 {
-                    return new { success = _postCreateService.CreatePost(content, loggedInUser) };
+                    var latestPost = _postQueryService.GetLatestPostFromUserId(loggedInUser.Id);
+
+                    var postPartialHtml = RenderViewToString(controllerContext, "_PostProfilePartial",
+                        new HomeIndexViewModel
+                        {
+                            PostsByLoggedInUser = new List<Post> { latestPost },
+                            User = loggedInUser
+                        });
+
+                    return postPartialHtml;
                 }
                 else
                 {
-                    return new { success = false, message = "Content exceeds " + _postQueryService.GetPostCharacterLimit() + " characters." };
+                    throw new Exception("Content exceeds " + _postQueryService.GetPostCharacterLimit() +
+                                        " characters.");
                 }
             }
             else
             {
-                return new { success = false, message = "You do not have permission to create this post." };
+                throw new Exception("You do not have permission to create this post.");
             }
         }
         catch (Exception ex)
         {
-            return new { success = false, message = "An error occurred while creating the post." };
+            throw new Exception("An error occurred while creating the post.", ex);
+        }
+    }
+
+    private string RenderViewToString(ControllerContext controllerContext, string viewName, object model)
+    {
+        using (var sw = new StringWriter())
+        {
+            var engine = controllerContext.HttpContext.RequestServices.GetRequiredService<IRazorViewEngine>();
+            var viewResult = engine.FindView(controllerContext, viewName, false);
+        
+            if (viewResult.View == null)
+            {
+                throw new ArgumentNullException($"{viewName} does not match any available view");
+            }
+
+            var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+            {
+                Model = model
+            };
+
+            var viewContext = new ViewContext(controllerContext, viewResult.View,
+                viewDictionary,
+                new TempDataDictionary(controllerContext.HttpContext, controllerContext.HttpContext.RequestServices.GetRequiredService<ITempDataProvider>()),
+                sw,
+                new HtmlHelperOptions());
+
+            var t = viewResult.View.RenderAsync(viewContext);
+
+            t.Wait();
+
+            return sw.GetStringBuilder().ToString();
         }
     }
 }

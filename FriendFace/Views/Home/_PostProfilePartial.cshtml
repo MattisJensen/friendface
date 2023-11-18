@@ -1,4 +1,4 @@
-@* _PostFeedPartial file *@
+@* _PostProfilePartial file *@
 
 @model FriendFace.ViewModels.HomeIndexViewModel
 
@@ -11,7 +11,7 @@
                     @* Name, Username *@
                     <span>
                         <span style="font-weight: bold;">@post.User.FirstName @Html.Raw(" ") @post.User.LastName</span>
-                        <span style="font-size: 80%;" class="text-muted">@Html.Raw("@")@post.User.Username</span>
+                        <span style="font-size: 80%;" class="text-muted">@Html.Raw("@")@post.User.UserName</span>
                     </span>
 
                     @* Menu for post *@

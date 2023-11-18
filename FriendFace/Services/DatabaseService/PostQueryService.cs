@@ -33,7 +33,20 @@ public class PostQueryService
             .Include(p => p.User)
             .Include(p => p.Likes)
             .Include(p => p.Comments)
+            .Where(p => !p.IsDeleted)
             .FirstOrDefault(p => p.Id == postId) ?? throw new NullReferenceException();
+    }
+    
+    public Post GetLatestPostFromUserId(int userId)
+    {
+        return _context.Posts
+            .Include(p => p.User)
+            .Include(p => p.Likes)
+            .Include(p => p.Comments)
+            .Where(p => p.UserId == userId)
+            .Where(p => !p.IsDeleted)
+            .OrderByDescending(p => p.Time)
+            .FirstOrDefault();
     }
     
     public List<Post> GetPostsFromUserId(int userId)
@@ -48,6 +61,8 @@ public class PostQueryService
             .OrderByDescending(p => p.Time)
             .ToList();
     }
+    
+    
 
     public int GetNumberOfLikes(int postId)
     {
