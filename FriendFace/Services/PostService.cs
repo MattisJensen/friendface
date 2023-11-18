@@ -157,11 +157,6 @@ public class PostService
             {
                 return new { success = false, message = "You do not have permission to create this post." };
             }
-            {
-                
-            }
-            
-            
         }
         catch (Exception ex)
         {

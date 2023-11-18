@@ -64,7 +64,6 @@ public class PostQueryService
 
     public List<Post> GetLatestPostsFromFeed(int userId)
     {
-        // return GetPostsFromUserId(userId);
         var usq = new UserQueryService(_context);
         var followingUserIds = usq.GetFollowingUserIds(userId);
             

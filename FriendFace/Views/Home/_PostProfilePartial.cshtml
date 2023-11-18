@@ -2,7 +2,7 @@
 
 @model FriendFace.ViewModels.HomeIndexViewModel
 
-@foreach (var post in Model.PostsInFeed)
+@foreach (var post in Model.PostsByLoggedInUser)
 { 
     <div id="postContainer-@post.Id" class="col-md-6 offset-md-3 mb-3">
         <div class="card">

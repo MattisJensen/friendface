@@ -43,11 +43,13 @@ namespace FriendFace.Controllers
         {
             var loggedInUser = _userQueryService.GetLoggedInUser();
             var postsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id);
+            var postsByLoggedInUser = _postQueryService.GetPostsFromUserId(loggedInUser.Id);
 
             var homeIndexViewModel = new HomeIndexViewModel()
             {
                 User = loggedInUser,
                 PostsInFeed = postsInFeed,
+                PostsByLoggedInUser = postsByLoggedInUser
             };
             return View(homeIndexViewModel);
         }
