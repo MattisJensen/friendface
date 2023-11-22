@@ -150,11 +150,10 @@ public class PostService
             // Check if the logged-in user is the owner of the post
             var loggedInUser = _userQueryService.GetLoggedInUser();
 
-            if (loggedInUser != null && loggedInUser.Id > 0)
+            // Check if logged in user is valid and if edited content is within character limit
+            if (loggedInUser != null && loggedInUser.Id > 0 && content.Length <= _postQueryService.GetPostCharacterLimit())
             {
-                // Check if the edited content is within the character limit
-                if (content.Length <= _postQueryService.GetPostCharacterLimit() &&
-                    _postCreateService.CreatePost(content, loggedInUser))
+                if (_postCreateService.CreatePost(content, loggedInUser))
                 {
                     var latestPost = _postQueryService.GetLatestPostFromUserId(loggedInUser.Id);
 
