@@ -24,7 +24,6 @@ namespace FriendFace.Data
             base.OnModelCreating(modelBuilder); // This needs to be called before the custom model configurations
             
             modelBuilder.Entity<User>()
-                .Ignore(u => u.UserName)
                 .Ignore(u => u.NormalizedUserName)
                 .Ignore(u => u.NormalizedEmail)
                 .Ignore(u => u.EmailConfirmed)

@@ -7,7 +7,9 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using FriendFace.Services;
 using FriendFace.Services.DatabaseService;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 
 namespace FriendFace.Controllers
@@ -16,6 +18,7 @@ namespace FriendFace.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
+
         private readonly UserQueryService _userQueryService;
         private readonly UserCreateService _userCreateService;
         private readonly PostQueryService _postQueryService;
@@ -25,6 +28,9 @@ namespace FriendFace.Controllers
         private readonly CommentService _commentService;
         private readonly PostService _postService;
 
+        private readonly RazorViewEngine _razorViewEngine;
+        private readonly ITempDataProvider _tempDataProvider;
+
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context,
             UserQueryService userQueryService, PostQueryService postQueryService,
             PostDeleteService postDeleteService, PostCreateService postCreateService,
@@ -32,6 +38,7 @@ namespace FriendFace.Controllers
         {
             _logger = logger;
             _context = context;
+
             _userQueryService = userQueryService;
             _userCreateService = userCreateService;
             _postQueryService = postQueryService;
@@ -47,11 +54,13 @@ namespace FriendFace.Controllers
         {
             var loggedInUser = _userQueryService.GetLoggedInUser();
             var postsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id);
+            var postsByLoggedInUser = _postQueryService.GetPostsFromUserId(loggedInUser.Id);
 
             var homeIndexViewModel = new HomeIndexViewModel()
             {
                 User = loggedInUser,
                 PostsInFeed = postsInFeed,
+                PostsByLoggedInUser = postsByLoggedInUser
             };
             return View(homeIndexViewModel);
         }
@@ -101,11 +110,11 @@ namespace FriendFace.Controllers
             var result = _postQueryService.GetPostCharacterLimit();
             return Json(result);
         }
-        
+
         [HttpPost]
         public IActionResult CreatePost([FromBody] string content)
         {
-            var result = _postService.CreatePost(content);
+            var result = _postService.CreatePost(content, ControllerContext);
             return Json(result);
         }
         

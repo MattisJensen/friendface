@@ -66,7 +66,8 @@ function publishPost(postCreateContainer, postContentEditField, postButton, publ
         data: JSON.stringify(postContentEditField.textContent),
         dataType: 'json',
         success: function (data) {
-            // Add new post to top of feed
+            $("#profile").prepend(data);
+            
             cancel(postCreateContainer, postContentEditField, postButton, publishButton, cancelButton, charCountText);
         },
         error: function (error) {
@@ -86,3 +87,4 @@ function cancel(postCreateContainer, postContentEditField, postButton, publishBu
     postContentEditField.setAttribute('contenteditable', 'false');
     postContentEditField.blur();
 }
+

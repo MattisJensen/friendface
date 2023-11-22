@@ -1,8 +1,8 @@
-@* _PostFeedPartial file *@
+@* _PostProfilePartial file *@
 
 @model FriendFace.ViewModels.HomeIndexViewModel
 
-@foreach (var post in Model.PostsInFeed)
+@foreach (var post in Model.PostsByLoggedInUser)
 { 
     <div id="postContainer-@post.Id" class="col-md-6 offset-md-3 mb-3">
         <div class="card">
@@ -13,6 +13,12 @@
                         <span style="font-weight: bold;">@post.User.FirstName @Html.Raw(" ") @post.User.LastName</span>
                         <span style="font-size: 80%;" class="text-muted">@Html.Raw("@")@post.User.UserName</span>
                     </span>
+
+                    @* Menu for post *@
+                    @if (post.User.Id == Model.User.Id)
+                    {
+                        <partial name="_PostMenuPartial" model="post"/>
+                    }
                 </div>
             </div>
             <div class="card-body">
@@ -31,15 +37,12 @@
                         }
                         <i class="@heartIcon" style="color: @heartIconColor; cursor: pointer;" data-post-id="@post.Id" onclick="toggleLikeOfPost(this)"></i>
                         <span id="likeCount-@post.Id">@post.Likes.Count</span>
-                        <i class="far fa-comment" id="comment-btn" data-post-id="@post.Id" style="cursor: pointer;" onclick="createComment(this, @post.Id)"></i> @post.Comments.Count
+                        <i class="far fa-comment"></i> @post.Comments.Count
                     </span>
                 </div>
 
                 @* Comments *@
                 <partial name="_CommentPartial" model="post.Comments"/>
-                <div id="commentCreateContainer" style="display: none">
-                    <partial name="_CommentCreatePartial"/>
-                </div>
             </div>
         </div>
     </div>

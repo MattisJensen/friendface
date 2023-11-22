@@ -19,15 +19,15 @@
     <div class="d-flex justify-content-center">
         <div class="btn-group btn-group-sm me-3" role="feed" aria-label="Toggle between feed and own content">
             <!-- Add ml-3 for left margin -->
-            <input type="radio" class="btn-check" name="feed" id="following-feed" autocomplete="off" checked>
+            <input type="radio" class="btn-check" name="feed" id="following-feed" onclick="toggleFeed('Feed')" autocomplete="off" checked>
             <label class="btn btn-outline-primary" for="following-feed">Feed</label>
-            <input type="radio" class="btn-check" name="feed" id="profile-feed" autocomplete="off">
+            <input type="radio" class="btn-check" name="feed" id="profile-feed" onclick="toggleFeed('Profile')" autocomplete="off">
             <label class="btn btn-outline-primary" for="profile-feed">My Published Posts</label>
         </div>
-        
+
         <button id="post-btn" type="button" class="btn btn-outline-primary btn-sm " onclick="createPost()">
-                    <i class="fas fa-plus"></i> Create Post
-                </button>
+            <i class="fas fa-plus"></i> Create Post
+        </button>
     </div>
 </div>
 
@@ -36,8 +36,13 @@
 </div>
 
 @* Posts in feed *@
-<partial name="_PostFeedPartial" model="Model"/>
+<div id="feed">
+    <partial name="_PostFeedPartial" model="Model" hidden="false"/>
+</div>
+<div id="profile" style="display: none">
+    <partial name="_PostProfilePartial" model="Model" hidden="true"/>
+</div>
 <script src="js/Home/createPost.js"></script>
+<script src="js/Home/toggleFeed.js"></script>
 </body>
 </html>
-
