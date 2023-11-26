@@ -29,6 +29,10 @@ namespace FriendFace.Controllers
         private readonly RazorViewEngine _razorViewEngine;
         private readonly ITempDataProvider _tempDataProvider;
 
+        //BOOL FOR AUTHENTICATION CHECKING
+
+        private readonly Boolean isLoggedIn = false;
+
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context,
             UserQueryService userQueryService, PostQueryService postQueryService,
             PostDeleteService postDeleteService, PostCreateService postCreateService,
@@ -48,6 +52,18 @@ namespace FriendFace.Controllers
 
         public IActionResult Index()
         {
+
+            if(!isLoggedIn)
+            {
+                var topLikedPosts = _postQueryService.GetPostsByLikes(5);
+
+                var guestViewModel = new GuestIndexViewModel
+                {
+                    TopLikedPosts = topLikedPosts
+                };
+                return View("GuestIndex", guestViewModel);
+            }
+
             var loggedInUser = _userQueryService.GetLoggedInUser();
             var postsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id);
             var postsByLoggedInUser = _postQueryService.GetPostsFromUserId(loggedInUser.Id);

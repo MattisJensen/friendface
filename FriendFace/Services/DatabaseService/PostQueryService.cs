@@ -13,7 +13,22 @@ public class PostQueryService
     {
         _context = context;
     }
-    
+
+    public List<Post> GetPostsByLikes(int count)
+    {
+        // Implementation to fetch top 'count' posts by likes
+        var posts = _context.Posts
+                            .Include(p => p.Likes)
+                            .Include(p => p.Comments)
+                            .Include(p => p.User)
+                            .OrderByDescending(p => p.Likes.Count)
+                            .ThenByDescending(p => p.Comments.Count)
+                            .Take(count)
+                            .ToList();
+
+        return posts;
+    }
+
     public int GetPostCharacterLimit()
     {
         // If the character limit has already been calculated before, return it
