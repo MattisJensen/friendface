@@ -1,5 +1,16 @@
-function createComment(postId) {
-    const _postId = postId
+// Create event listener for all comment buttons
+document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('click', function (event) {
+        if (event.target && event.target.id === 'comment-btn') {
+            createComment(event.target);
+        }
+    });
+});
+
+function createComment(comment) {
+// Create a comment, reminiscent of the PostCreatePartial.
+    console.log("Comment create button clicked");
+    const _postId = comment.getAttribute('data-post-id');
     $.ajax({
         type: "GET",
         url: "/Home/GetPostCharLimit",
