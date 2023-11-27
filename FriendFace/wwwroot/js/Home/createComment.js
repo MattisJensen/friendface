@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function createComment(comment) {
 // Create a comment, reminiscent of the PostCreatePartial.
-    console.log("Comment create button clicked");
     const _postId = comment.getAttribute('data-post-id');
     $.ajax({
         type: "GET",
@@ -22,7 +21,7 @@ function createComment(comment) {
             var commentButton = document.getElementById('comment-btn-' + _postId);
 
             // Publish button settings
-            commentButton.disabled = true;
+            // commentButton.disabled = true;  // TODO: Replace this with func appropriate for comment button
 
             // comment field settings
             commentCreateContainer.style.display = 'block';
