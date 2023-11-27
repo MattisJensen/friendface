@@ -1,7 +1,8 @@
 // Create event listener for all comment buttons
 document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('click', function (event) {
-        if (event.target && event.target.id === 'comment-btn') {
+        // Check if the clicked element has a class or data attribute that identifies it as a comment button
+        if (event.target && (event.target.classList.contains('comment-btn') || event.target.dataset.postId)) {
             createComment(event.target);
         }
     });
@@ -16,9 +17,9 @@ function createComment(comment) {
         url: "/Home/GetPostCharLimit",
         success: function (data) {
             var commentCharacterLimit = data;
-            var commentCreateContainer = document.getElementById('commentCreateContainer');
-            var commentContentEditField = document.getElementById('commentContent-create');
-            var commentButton = document.getElementById('comment-btn');
+            var commentCreateContainer = document.getElementById('commentCreateContainer-' + _postId);
+            var commentContentEditField = document.getElementById('commentContent-create-' + _postId);
+            var commentButton = document.getElementById('comment-btn-' + _postId);
 
             // Publish button settings
             commentButton.disabled = true;
