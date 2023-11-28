@@ -119,9 +119,9 @@ namespace FriendFace.Controllers
         }
         
         [HttpPost]
-        public IActionResult CreateComment([FromBody] string content, [FromQuery] int postId)
+        public IActionResult CreateComment([FromBody] CommentRequest request)
         {
-            var result = _commentService.CreateComment(content, postId);
+            var result = _commentService.CreateComment(request.Content, request.PostId);
             return Json(result);
         }
     }
