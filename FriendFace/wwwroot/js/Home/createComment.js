@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+var commentBtnsClicked = [];
+
 function createComment(comment) {
 // Create a comment, reminiscent of the PostCreatePartial.
     const _postId = comment.getAttribute('data-post-id');
@@ -19,6 +21,10 @@ function createComment(comment) {
             var commentCreateContainer = document.getElementById('commentCreateContainer-' + _postId);
             var commentContentEditField = document.getElementById('commentContent-create-' + _postId);
             var commentButton = document.getElementById('comment-btn-' + _postId);
+            if(commentBtnsClicked.includes(_postId)) { // Prevents multiple comment boxes from being created for same post
+                return;
+            }
+            commentBtnsClicked.push(_postId);
 
             // Publish button settings
             // commentButton.disabled = true;  // TODO: Replace this with func appropriate for comment button
@@ -43,7 +49,7 @@ function createComment(comment) {
             cancelButton.textContent = 'Cancel';
             cancelButton.className = 'btn btn-secondary btn-sm mt-2 mb-4';
             cancelButton.addEventListener('click', function () {
-                cancel(commentCreateContainer, commentContentEditField, commentButton, publishButton, cancelButton, charCountText);
+                cancelComment(commentCreateContainer, commentContentEditField, commentButton, publishButton, cancelButton, charCountText, _postId);
             });
 
             var charCountText = document.createElement('span');
@@ -79,7 +85,7 @@ function publishcomment(commentCreateContainer, commentContentEditField, comment
         dataType: 'json',
         success: function (data) {
             // Add new comment to top of feed
-            cancel(commentCreateContainer, commentContentEditField, commentButton, publishButton, cancelButton, charCountText);
+            cancelComment(commentCreateContainer, commentContentEditField, commentButton, publishButton, cancelButton, charCountText, postId);
         },
         error: function (error) {
             console.error("Error creating comment: ", error);
@@ -87,9 +93,7 @@ function publishcomment(commentCreateContainer, commentContentEditField, comment
     });
 }
 
-function cancel(commentCreateContainer, commentContentEditField, commentButton, publishButton, cancelButton, charCountText) {
-    commentButton.disabled = false;
-
+function cancelComment(commentCreateContainer, commentContentEditField, commentButton, publishButton, cancelButton, charCountText, postId) {
     publishButton.remove();
     cancelButton.remove();
     charCountText.remove();
@@ -97,4 +101,7 @@ function cancel(commentCreateContainer, commentContentEditField, commentButton, 
     commentCreateContainer.style.display = 'none';
     commentContentEditField.setAttribute('contenteditable', 'false');
     commentContentEditField.blur();
+    commentBtnsClicked = commentBtnsClicked.filter(function(value){ // Remove this postId from array
+        return value !== postId;
+    })
 }
