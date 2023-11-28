@@ -75,10 +75,13 @@ function createComment(comment) {
 
 function publishcomment(commentCreateContainer, commentContentEditField, commentButton, publishButton, cancelButton, charCountText, postId) {
     $.ajax({
-        url: `/Home/CreateComment/?postId=${postId}`,
-        type: 'comment',
+        url: `/Home/CreateComment/`,
+        type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify(commentContentEditField.textContent),
+        data: JSON.stringify({
+            postId: postId,
+            content: commentContentEditField.textContent
+        }),
         dataType: 'json',
         success: function (data) {
             // Add new comment to top of feed
