@@ -26,9 +26,6 @@ function createComment(comment) {
             }
             commentBtnsClicked.push(_postId);
 
-            // Publish button settings
-            // commentButton.disabled = true;  // TODO: Replace this with func appropriate for comment button
-
             // comment field settings
             commentCreateContainer.style.display = 'block';
             commentContentEditField.textContent = '';

@@ -19,7 +19,6 @@ public class CommentService
     {
         try
         {
-            // Check if the logged-in user is the owner of the post
             var loggedInUser = _userQueryService.GetLoggedInUser();
 
             if (loggedInUser != null && loggedInUser.Id > 0)
