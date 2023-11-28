@@ -2,8 +2,18 @@
 
 @model FriendFace.ViewModels.HomeIndexViewModel
 
+@* @List<Post> posts = null; *@
+@* *@
+@* @if () *@
+@* { *@
+@*     posts = Model.PostsInFeed; *@
+@* } *@
+@* else *@
+@* { *@
+@*     posts = Model.PostsByLoggedInUser; *@
+@* } *@
 @foreach (var post in Model.PostsInFeed)
-{ 
+{
     <div id="postContainer-@post.Id" class="col-md-6 offset-md-3 mb-3">
         <div class="card">
             <div class="card-header" style="background-color: #f8f8f8">
@@ -13,6 +23,12 @@
                         <span style="font-weight: bold;">@post.User.FirstName @Html.Raw(" ") @post.User.LastName</span>
                         <span style="font-size: 80%;" class="text-muted">@Html.Raw("@")@post.User.UserName</span>
                     </span>
+
+                    @* Menu for post *@
+                    @if (post.User.Id == Model.User.Id)
+                    {
+                        <partial name="_PostMenuPartial" model="post"/>
+                    }
                 </div>
             </div>
             <div class="card-body">

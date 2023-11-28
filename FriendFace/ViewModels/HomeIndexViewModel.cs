@@ -8,4 +8,5 @@ public class HomeIndexViewModel
     public User User { get; set; }
     public List<Post> PostsInFeed { get; set; }
     public List<Post> PostsByLoggedInUser { get; set; }
+    public int PostCharLimit { get; set; }
 }
