@@ -98,7 +98,7 @@ namespace FriendFace.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditPost([FromBody] EditPostViewModel model)
+        public IActionResult EditPost([FromBody] PostIdContentModel model)
         {
             var result = _postService.EditPost(model);
             return Json(result);
@@ -119,7 +119,7 @@ namespace FriendFace.Controllers
         }
         
         [HttpPost]
-        public IActionResult CreateComment([FromBody] CommentRequest request)
+        public IActionResult CreateComment([FromBody] PostIdContentModel request)
         {
             var result = _commentService.CreateComment(request.Content, request.PostId);
             return Json(result);
