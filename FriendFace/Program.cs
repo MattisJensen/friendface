@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FriendFace.Data;
+using FriendFace.Services;
 using FriendFace.Services.DatabaseService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +28,7 @@ builder.Services.AddScoped<UserCreateService>();
 builder.Services.AddScoped<UserQueryService>();
 builder.Services.AddScoped<UserUpdateService>();
 builder.Services.AddScoped<PostService>();
+builder.Services.AddScoped<CommentService>();
 
 var app = builder.Build();
 

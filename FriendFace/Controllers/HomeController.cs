@@ -5,6 +5,7 @@ using FriendFace.Data;
 using FriendFace.ViewModels;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using FriendFace.Services;
 using FriendFace.Services.DatabaseService;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -23,7 +24,8 @@ namespace FriendFace.Controllers
         private readonly PostQueryService _postQueryService;
         private readonly PostDeleteService _postDeleteService;
         private readonly PostCreateService _postCreateService;
-
+        
+        private readonly CommentService _commentService;
         private readonly PostService _postService;
 
         private readonly RazorViewEngine _razorViewEngine;
@@ -32,7 +34,7 @@ namespace FriendFace.Controllers
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context,
             UserQueryService userQueryService, PostQueryService postQueryService,
             PostDeleteService postDeleteService, PostCreateService postCreateService,
-            UserCreateService userCreateService, PostService postService)
+            UserCreateService userCreateService, PostService postService, CommentService commentService)
         {
             _logger = logger;
             _context = context;
@@ -44,6 +46,8 @@ namespace FriendFace.Controllers
             _postCreateService = postCreateService;
 
             _postService = postService;
+
+            _commentService = commentService;
         }
 
         public IActionResult Index()
@@ -96,7 +100,7 @@ namespace FriendFace.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditPost([FromBody] EditPostViewModel model)
+        public IActionResult EditPost([FromBody] PostIdContentModel model)
         {
             var result = _postService.EditPost(model);
             return Json(result);
@@ -116,5 +120,11 @@ namespace FriendFace.Controllers
             return RedirectToAction("Index");
         }
         
+        [HttpPost]
+        public IActionResult CreateComment([FromBody] PostIdContentModel request)
+        {
+            var result = _commentService.CreateComment(request.Content, request.PostId);
+            return Json(result);
+        }
     }
 }
