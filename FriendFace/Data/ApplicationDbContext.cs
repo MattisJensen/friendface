@@ -23,18 +23,6 @@ namespace FriendFace.Data
         {
             base.OnModelCreating(modelBuilder); // This needs to be called before the custom model configurations
             
-            modelBuilder.Entity<User>()
-                .Ignore(u => u.NormalizedUserName)
-                .Ignore(u => u.NormalizedEmail)
-                .Ignore(u => u.EmailConfirmed)
-                .Ignore(u => u.SecurityStamp)
-                .Ignore(u => u.ConcurrencyStamp)
-                .Ignore(u => u.PhoneNumber)
-                .Ignore(u => u.PhoneNumberConfirmed)
-                .Ignore(u => u.TwoFactorEnabled)
-                .Ignore(u => u.LockoutEnd)
-                .Ignore(u => u.LockoutEnabled)
-                .Ignore(u => u.AccessFailedCount);
             
             modelBuilder.Entity<UserFollowsUser>()
                 .HasOne(ufu => ufu.Follower)
