@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FriendFace.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
         // DbSet for each entity/table we want to interact with
-        public DbSet<User> Users { get; set; }
-        public DbSet<UserFollowsUser> UserFollowsUsers { get; set; }
-        public DbSet<Post> Posts { get; set; }
-        public DbSet<UserLikesPost> UserLikesPosts { get; set; }
-        public DbSet<Comment> Comments { get; set; }
+        public new DbSet<User>? Users { get; set; }
+        public DbSet<UserFollowsUser>? UserFollowsUsers { get; set; }
+        public DbSet<Post>? Posts { get; set; }
+        public DbSet<UserLikesPost>? UserLikesPosts { get; set; }
+        public DbSet<Comment>? Comments { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -27,7 +27,6 @@ namespace FriendFace.Data
                 .Ignore(u => u.NormalizedUserName)
                 .Ignore(u => u.NormalizedEmail)
                 .Ignore(u => u.EmailConfirmed)
-                .Ignore(u => u.PasswordHash)
                 .Ignore(u => u.SecurityStamp)
                 .Ignore(u => u.ConcurrencyStamp)
                 .Ignore(u => u.PhoneNumber)
