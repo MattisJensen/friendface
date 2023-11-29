@@ -55,12 +55,14 @@ namespace FriendFace.Controllers
             var loggedInUser = _userQueryService.GetLoggedInUser();
             var postsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id);
             var postsByLoggedInUser = _postQueryService.GetPostsFromUserId(loggedInUser.Id);
+            var postCharLimit = _postQueryService.GetPostCharacterLimit();
 
             var homeIndexViewModel = new HomeIndexViewModel()
             {
                 User = loggedInUser,
                 PostsInFeed = postsInFeed,
-                PostsByLoggedInUser = postsByLoggedInUser
+                PostsByLoggedInUser = postsByLoggedInUser,
+                PostCharLimit = postCharLimit
             };
             return View(homeIndexViewModel);
         }
@@ -112,10 +114,10 @@ namespace FriendFace.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreatePost([FromBody] string content)
+        public IActionResult CreatePost(string content)
         {
-            var result = _postService.CreatePost(content, ControllerContext);
-            return Json(result);
+            _postService.CreatePost(content, ControllerContext);
+            return RedirectToAction("Index");
         }
         
         [HttpPost]

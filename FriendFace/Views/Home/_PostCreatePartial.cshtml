@@ -1,5 +1,19 @@
 @* _PostCreatePartial file *@
 
 <div class="col-md-6 offset-md-3 mb-3">
-    <p id="postContent-create" contenteditable="false" class="card-text text-left" style="background-color: rgb(231, 231, 231); border-radius: 4px; padding: 10px; outline: 0;"></p>
+    <form action="/Home/CreatePost" method="post">
+        <div class="mb-3">
+            <input name="content" type="text" class="form-control shadow-none input-field" id="postContent-publishField" placeholder="what's on your mind..." aria-describedby="content post field">
+            <div class="form-text">
+                <p><span id="postContent-chars">0</span>/<span id="postContent-chars-limit">@Model</span> chars</p>
+            </div>
+        </div>
+        <button class="btn btn-success btn-sm mb-4 me-2" id="postContent-button-publish" type="submit" onclick="publishPost()">
+            <i class="fas fa-arrow-up"></i> Publish Post
+        </button>
+        <button class="btn btn-secondary btn-sm mb-4" type="button" onclick="cancelPost()">Cancel</button>
+    </form>
 </div>
+
+<script src="js/Home/cancelPost.js"></script>
+<script src="js/Home/publishPost.js"></script>

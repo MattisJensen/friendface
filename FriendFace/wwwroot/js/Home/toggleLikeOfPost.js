@@ -7,7 +7,7 @@ function toggleLikeOfPost(heartIcon) {
         contentType: 'application/json',
         data: JSON.stringify(postId),
         success: function () {
-            // If the like/unlike was successful, fetch and update the likes
+            // If like/unlike successful, fetch and update the likes
             $.ajax({
                 type: 'GET',
                 url: `/Home/GetPostLikes?postId=${postId}`,
