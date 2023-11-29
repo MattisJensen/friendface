@@ -48,12 +48,16 @@ namespace FriendFace.Controllers
 
         public IActionResult Index()
         {
-            var loggedInUser = _userQueryService.GetLoggedInUser();
+            var loggedInUser = _userQueryService.GetLoggedInUser().Result;
+            if (loggedInUser == null)
+            {
+                return RedirectToAction("Login", "Login");
+            }
             var postsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id);
             var postsByLoggedInUser = _postQueryService.GetPostsFromUserId(loggedInUser.Id);
             var postCharLimit = _postQueryService.GetPostCharacterLimit();
 
-            var homeIndexViewModel = new HomeIndexViewModel()
+            var homeIndexViewModel = new HomeIndexViewModel
             {
                 User = loggedInUser,
                 PostsInFeed = postsInFeed,
