@@ -18,11 +18,11 @@ namespace FriendFace.Controllers
             .Build();
 
         private readonly ApplicationDbContext _context;
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
 
-        public LoginController(ApplicationDbContext context, SignInManager<IdentityUser> signInManager, 
-                                UserManager<IdentityUser> userManager)
+        public LoginController(ApplicationDbContext context, SignInManager<User> signInManager, 
+                                UserManager<User> userManager)
         {
             _context = context;
             _signInManager = signInManager;
@@ -48,15 +48,13 @@ namespace FriendFace.Controllers
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
             var result = await _signInManager.PasswordSignInAsync(uname, psw, isPersistent: true, lockoutOnFailure: false);
+            Console.WriteLine(result);
 
             if (result.Succeeded)
-            {
+            {   
+                Console.Write("Login successful!");
                 // Redirect the user to the return URL or a default page
                 return RedirectToAction("Index", "Home");
-            }
-            else if (result.IsLockedOut)
-            {
-                // Handle user lockout scenario
             }
             else
             {
@@ -64,35 +62,29 @@ namespace FriendFace.Controllers
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return RedirectToAction("Index", "Home");
             }
-
-            return RedirectToAction("Index", "Home");
         }
 
         
         // Registration-page
         public async Task<IActionResult> DoRegister(string uname, string psw, string email)
         {
-            
-            
-            // Create a new User object
-            var user = new User { Username = uname, FirstName = "Test", LastName = "Test", Password = psw, Email = email };
-        
-            // Add the new user to the DbContext
-            _context.Users.Add(user);
-        
-            // Save changes to the database
-            var affectedRows = _context.SaveChanges();
+            var user = new User { UserName = uname, FirstName = "Test", LastName = "Test", Email = email };
+            var result = await _userManager.CreateAsync(user, psw);
 
-            if (affectedRows == 1)
+            if (result.Succeeded)
             {
-                var result = await _signInManager.PasswordSignInAsync(user.Username, user.Password, 
-                                                            isPersistent: true, lockoutOnFailure: false);
+                await _signInManager.PasswordSignInAsync(user.UserName, psw, isPersistent: true, lockoutOnFailure: false);
                 return RedirectToAction("Index", "Home");
             }
             else
             {
-                throw new Exception("User was not created.");
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return View("Register"); // Adjust as necessary
             }
         }
+
     }
 }

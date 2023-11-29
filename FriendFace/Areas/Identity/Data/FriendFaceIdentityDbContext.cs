@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FriendFace.Areas.Identity.Data;
 
-public class FriendFaceIdentityDbContext : IdentityDbContext<IdentityUser>
+public class FriendFaceIdentityDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
     public FriendFaceIdentityDbContext(DbContextOptions<FriendFaceIdentityDbContext> options)
         : base(options)

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FriendFace.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
         // DbSet for each entity/table we want to interact with
         public DbSet<User> Users { get; set; }

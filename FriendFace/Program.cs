@@ -12,13 +12,16 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("FriendFaceIdentityDbContextConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-// builder.Services.AddIdentity<User, IdentityRole>()
-//    .AddEntityFrameworkStores<ApplicationDbContext>()
-//    .AddDefaultTokenProviders();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+// If you're using roles, use AddIdentity. Otherwise, you can use AddDefaultIdentity.
+builder.Services.AddIdentity<User, IdentityRole<int>>() // Adjust IdentityRole<int> as per your setup
+    .AddEntityFrameworkStores<FriendFaceIdentityDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddRazorPages();
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<CommentCreateService>();
@@ -47,6 +50,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
