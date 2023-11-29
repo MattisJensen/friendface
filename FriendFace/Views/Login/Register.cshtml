@@ -9,9 +9,19 @@
 <body>
 <div class="container">
     <h2>Register</h2>
-    @using (Html.BeginForm("DoRegister", "Login", FormMethod.Post))
+    @using (Html.BeginForm("Register", "Login", FormMethod.Post))
     {
         @Html.AntiForgeryToken()
+        
+        <div class="form-group">
+            <label for="fname"><b>First Name</b></label>
+            <input type="text" placeholder="Enter First Name" name="fname" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="lname"><b>Last Name</b></label>
+            <input type="text" placeholder="Enter Last Name" name="lname" required>
+        </div>
 
         <div class="form-group">
             <label for="uname"><b>Username</b></label>
