@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FriendFace.Data;
+using FriendFace.Services;
 using FriendFace.Services.DatabaseService;
 using Microsoft.Extensions.Options;
 
@@ -42,6 +43,8 @@ builder.Services.AddScoped<UserUpdateService>();
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<SignInManager<User>>();
 builder.Services.AddScoped<UserManager<User>>();
+builder.Services.AddScoped<CommentService>();
+
 
 var app = builder.Build();
 

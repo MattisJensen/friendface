@@ -47,12 +47,17 @@
                         }
                         <i class="@heartIcon" style="color: @heartIconColor; cursor: pointer;" data-post-id="@post.Id" onclick="toggleLikeOfPost(this)"></i>
                         <span id="likeCount-@post.Id">@post.Likes.Count</span>
-                        <i class="far fa-comment"></i> @post.Comments.Count
+                        <i class="far fa-comment comment-btn" id="comment-btn-@post.Id" data-post-id="@post.Id" style="cursor: pointer;"></i> @post.Comments.Count
                     </span>
                 </div>
 
                 @* Comments *@
                 <partial name="_CommentPartial" model="post.Comments"/>
+                <div id="commentCreateContainer-@post.Id" style="display: none">
+                    <div class="col-md-6 offset-md-3 mb-3">
+                        <p id="commentContent-create-@post.Id" contenteditable="false" class="card-text text-left" style="background-color: rgb(231, 231, 231); border-radius: 4px; padding: 10px; outline: 0;"></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -63,3 +68,4 @@
 }
 
 <script src="js/Home/toggleLikeOfPost.js"></script>
+<script src="js/Home/createComment.js"></script>

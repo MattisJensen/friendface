@@ -105,12 +105,12 @@ public class PostService
         }
     }
 
-    public object EditPost(EditPostViewModel model)
+    public object EditPost(PostIdContentModel model)
     {
         try
         {
             int postId = model.PostId;
-            string editedContent = model.EditedContent;
+            string editedContent = model.Content;
 
             // Check if the logged-in user is the owner of the post
             var loggedInUser = _userQueryService.GetLoggedInUser();
