@@ -64,9 +64,9 @@ namespace FriendFace.Controllers
 
         // POST: Login/Login
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password)
+        public async Task<IActionResult> Login(string uname, string psw)
         {
-            var result = await _signInManager.PasswordSignInAsync(username, password, isPersistent: false, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(uname, psw, isPersistent: false, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
