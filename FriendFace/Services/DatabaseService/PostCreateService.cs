@@ -8,10 +8,10 @@ public class PostCreateService
     private readonly ApplicationDbContext _context;
     private readonly PostQueryService _postQueryService;
 
-    public PostCreateService(ApplicationDbContext context)
+    public PostCreateService(ApplicationDbContext context, PostQueryService postQueryService)
     {
         _context = context;
-        _postQueryService = new PostQueryService(_context);
+        _postQueryService = postQueryService;
     }
 
     public bool CreatePost(string content, User sourceUser)
