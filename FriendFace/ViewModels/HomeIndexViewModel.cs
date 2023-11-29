@@ -1,4 +1,5 @@
 using FriendFace.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace FriendFace.ViewModels;
 

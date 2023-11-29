@@ -40,6 +40,8 @@ builder.Services.AddScoped<UserCreateService>();
 builder.Services.AddScoped<UserQueryService>();
 builder.Services.AddScoped<UserUpdateService>();
 builder.Services.AddScoped<PostService>();
+builder.Services.AddScoped<SignInManager<User>>();
+builder.Services.AddScoped<UserManager<User>>();
 
 var app = builder.Build();
 

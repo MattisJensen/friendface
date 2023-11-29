@@ -78,7 +78,7 @@ namespace FriendFace.Controllers
         }
 
         // POST: Login/Logout
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
