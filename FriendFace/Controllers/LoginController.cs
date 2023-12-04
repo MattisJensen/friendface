@@ -1,103 +1,88 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql;
-using Microsoft.Extensions.Configuration;
-using NpgsqlTypes;
+using Microsoft.AspNetCore.Identity;
+using FriendFace.Models; // Assuming this is where your User model is located
 
 namespace FriendFace.Controllers
 {
     public class LoginController : Controller
     {
-        private static IConfiguration _config = new ConfigurationBuilder() // Uses secrets. One needs to have a secrets.json file setup: https://blog.jetbrains.com/dotnet/2023/01/17/securing-sensitive-information-with-net-user-secrets/
-            .AddUserSecrets<Program>()
-            .Build();
-        
-        private static string _connString = _config["connString"]; // Retrieves the connection string as a stored secret, on the format: "Host=cornelius.db.elephantsql.com:5432;Username=<username>;Password=<password;Database=<database>"
-        
-        
-        // Main login-page
-        public IActionResult Index()
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+
+        public LoginController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
-            return View();
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
-        
-        // Register new user page
+
+        // GET: Login/Register
         public IActionResult Register()
         {
             return View();
         }
-        
-        // Handling the log-in info
-        public async Task<bool> DoLogin()
-        {
-            // Establish DB connection
-            await using var dataSource = NpgsqlDataSource.Create(_connString);
-            
-            // Sanitize input
-            // ...
-            
-            string username = Request.Form["uname"];
-            string password = Request.Form["psw"]; // This far, the password is probably plain-text.
-            
-            bool hasReturn;
-            
-            // Insert input data
-            await using (var cmd = dataSource.CreateCommand("SELECT id FROM users WHERE username = $1 " +
-                                                            "AND password = crypt($2, password)"))
-            {
-                cmd.Parameters.AddWithValue(NpgsqlDbType.Varchar, username);
-                cmd.Parameters.AddWithValue(NpgsqlDbType.Varchar, password);
 
-                await using (var reader = await cmd.ExecuteReaderAsync())
+        // POST: Login/Register
+        [HttpPost]
+        public async Task<IActionResult> Register(string fname, string lname,string uname, string email, string psw)
+        {
+            var user = new User {FirstName = fname, LastName = lname, UserName = uname, Email = email };
+            try
+            {
+                var result = await _userManager.CreateAsync(user, psw);
+                // Handle result...
+                if (result.Succeeded)
                 {
-                    hasReturn = reader.HasRows;
+                    // Optionally, sign the user in after registration
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("Index", "Home"); // Modify as needed
+                }
+
+                // Handle errors
+                foreach (var error in result.Errors)
+                {
+                    throw new Exception(error.Description);
                 }
             }
+            catch (Exception ex)
+            {
+                // Log exception
+                throw new InvalidOperationException($"Unexpected error occurred in {nameof(Register)}", ex);
+            }
 
-            return hasReturn;
+            
+
+            return View();
         }
-        
-        // Registration-page
-        public async Task<bool> DoRegister()
+
+        // GET: Login/Login
+        public IActionResult Login()
         {
-            // Establish DB connection
-            await using var dataSource = NpgsqlDataSource.Create(_connString);
-            
-            string username = Request.Form["uname"];
-            string password = Request.Form["psw"]; // This far, the password is probably plain-text.
-            string email = Request.Form["email"];
+            // return to home page if user is already logged in
+            return View("Index");
+        }
 
-            bool affectedOneRow;
-            
-            // Sanitize input
-            // ...
-            
-            
-            // Insert input data
-            await using (var cmd = dataSource.CreateCommand("INSERT INTO users (username, email, password) " +
-                                                            "VALUES ($1, $2, crypt($3, gen_salt('bf')))")) // Do some database "sanitation" here. Think of what will happen if user already exists, for instance. 
+        // POST: Login/Login
+        [HttpPost]
+        public async Task<IActionResult> Login(string uname, string psw)
+        {
+            var result = await _signInManager.PasswordSignInAsync(uname, psw, isPersistent: false, lockoutOnFailure: false);
+
+            if (result.Succeeded)
             {
-                cmd.Parameters.AddWithValue(NpgsqlDbType.Varchar, username);
-                cmd.Parameters.AddWithValue(NpgsqlDbType.Varchar, email);
-                cmd.Parameters.AddWithValue(NpgsqlDbType.Varchar, password);
-                
-                await cmd.ExecuteNonQueryAsync();
-            }
-            
-            // Verify insertion
-            await using (var cmd = dataSource.CreateCommand("SELECT id FROM users WHERE username = $1 " +
-                                                            "AND password = crypt($2, password)"))
-            {
-                cmd.Parameters.AddWithValue(NpgsqlDbType.Varchar, username);
-                cmd.Parameters.AddWithValue(NpgsqlDbType.Varchar, password);
-            
-                await using (var reader = await cmd.ExecuteReaderAsync())
-                {
-                    affectedOneRow = reader.HasRows;;
-                }
+                return RedirectToAction("Index", "Home"); // Modify as needed
             }
 
-            return affectedOneRow;
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            return View("Index");
+        }
+
+        // POST: Login/Logout
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home"); // Modify as needed
         }
     }
 }

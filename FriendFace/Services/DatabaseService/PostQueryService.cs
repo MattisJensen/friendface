@@ -7,11 +7,13 @@ namespace FriendFace.Services.DatabaseService;
 public class PostQueryService
 {
     private readonly ApplicationDbContext _context;
+    private readonly UserQueryService _userQueryService;
     private int? _postCharacterLimit;
 
-    public PostQueryService(ApplicationDbContext context)
+    public PostQueryService(ApplicationDbContext context, UserQueryService userQueryService)
     {
         _context = context;
+        _userQueryService = userQueryService;
     }
     
     public int GetPostCharacterLimit()
@@ -79,8 +81,7 @@ public class PostQueryService
 
     public List<Post> GetLatestPostsFromFeed(int userId)
     {
-        var usq = new UserQueryService(_context);
-        var followingUserIds = usq.GetFollowingUserIds(userId);
+        var followingUserIds = _userQueryService.GetFollowingUserIds(userId);
             
         return _context.Posts
             .Include(p => p.User)

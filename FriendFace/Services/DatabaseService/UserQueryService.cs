@@ -1,4 +1,5 @@
 using FriendFace.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FriendFace.Services.DatabaseService;
@@ -6,15 +7,31 @@ namespace FriendFace.Services.DatabaseService;
 public class UserQueryService
 {
     private readonly ApplicationDbContext _context;
-    
-    public UserQueryService(ApplicationDbContext context)
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+
+    public UserQueryService(ApplicationDbContext context, UserManager<User> userManager, SignInManager<User> signInManager)
     {
         _context = context;
+        _userManager = userManager;
+        _signInManager = signInManager;
     }
 
-    public User GetLoggedInUser()
-    {
-        return GetUserById(1);
+    public async Task<User> GetLoggedInUser()
+    {   
+        // Check if user is logged in
+        if (_signInManager.IsSignedIn(_signInManager.Context.User))
+        {
+            // Get the user from the database
+            var user = _userManager.GetUserAsync(_signInManager.Context.User).Result;
+            return user;
+        }
+        else
+        {
+            // User is not logged in
+            return null;
+        }
+        
     }
     
     public User GetUserById(int userId)

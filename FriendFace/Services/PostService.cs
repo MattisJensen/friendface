@@ -148,7 +148,7 @@ public class PostService
         try
         {
             // Check if the logged-in user is the owner of the post
-            var loggedInUser = _userQueryService.GetLoggedInUser();
+            var loggedInUser = _userQueryService.GetLoggedInUser().Result;
 
             // Check if logged in user is valid and if edited content is within character limit
             if (loggedInUser != null && loggedInUser.Id > 0 && content.Length <= _postQueryService.GetPostCharacterLimit())
