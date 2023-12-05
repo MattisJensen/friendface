@@ -1,4 +1,4 @@
-function editPost(postId) {
+function postEdit(postId) {
     $.ajax({
         type: "GET",
         url: "/Home/GetPostCharLimit", 
@@ -8,12 +8,7 @@ function editPost(postId) {
             // Make the post content editable
             let postContentItem = $('#postContent-' + postId);
             postContentItem.attr('contenteditable', true);
-            postContentItem.css({
-                'background-color': 'rgb(231,231,231)',
-                'border-radius': '5px',
-                'padding': '10px',
-                'outline': '0'
-            });
+            postContentItem.addClass('input-field');
 
             $('#postMenuButton-' + postId).hide();
 
@@ -25,6 +20,7 @@ function editPost(postId) {
                 id: 'saveButton-' + postId,
                 text: 'Save',
                 class: 'btn btn-success btn-sm mt-2 me-2 mb-4',
+                type: 'submit',
                 click: function () {
                     savePost(postId);
                 }

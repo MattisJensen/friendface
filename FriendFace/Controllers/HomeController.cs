@@ -96,11 +96,11 @@ namespace FriendFace.Controllers
             return Json(result);
         }
 
-        [HttpPost]
-        public IActionResult DeletePost([FromBody] int postId)
+        [HttpGet]
+        public IActionResult DeletePost(int postId)
         {
             var result = _postService.DeletePost(postId);
-            return Json(result);
+            return RedirectToAction("Index");
         }
 
         [HttpPost]

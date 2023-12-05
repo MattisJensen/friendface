@@ -24,7 +24,7 @@
             <label class="btn btn-outline-primary" for="profile-feed">My Published Posts</label>
         </div>
 
-        <button id="post-btn" type="button" class="btn btn-outline-primary btn-sm " onclick="createPost()">
+        <button id="post-btn" type="button" class="btn btn-outline-primary btn-sm " onclick="postCreate()">
             <i class="fas fa-plus"></i> Create Post
         </button>
     </div>
@@ -41,7 +41,7 @@
 <div id="profile" style="display: none">
     <partial name="_PostProfilePartial" model="Model" hidden="true"/>
 </div>
-<script src="js/Home/createPost.js"></script>
+<script src="js/Home/Post/postCreate.js"></script>
 <script src="js/Home/toggleFeed.js"></script>
 </body>
 </html>

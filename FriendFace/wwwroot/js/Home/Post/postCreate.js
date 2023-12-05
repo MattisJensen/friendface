@@ -1,13 +1,13 @@
-function createPost() {
+function postCreate() {
     $('#postCreateContainer').show();
     $('#post-btn').attr('disabled', true);
 
-    const postContentPublishField = $('#postContent-publishField');
+    let postContentPublishField = $('#postContent-publishField');
     postContentPublishField.focus();
     
-    const charsInPublishFieldPlaceholder = $('#postContent-chars');
-    const charLimit = Number($('#postContent-chars-limit').text());
-    const publishButton = $('#postContent-button-publish');
+    let charsInPublishFieldPlaceholder = $('#postContent-chars');
+    let charLimit = Number($('#postContent-chars-limit').text());
+    let publishButton = $('#postContent-button-publish');
 
     postContentPublishField.on('input', function () {
         // Update character count text
