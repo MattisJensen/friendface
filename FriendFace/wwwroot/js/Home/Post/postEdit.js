@@ -1,109 +1,79 @@
-function postEdit(postId) {
-    $.ajax({
-        type: "GET",
-        url: "/Home/GetPostCharLimit", 
-        success: function (data) {
-            var postCharacterLimit = data;
+document.addEventListener('DOMContentLoaded', function () {
+    var editFields = document.querySelectorAll('[id^="editField-"]');
 
-            // Make the post content editable
-            let postContentItem = $('#postContent-' + postId);
-            postContentItem.attr('contenteditable', true);
-            postContentItem.addClass('input-field');
-
-            $('#postMenuButton-' + postId).hide();
-
-            // Save the original post content in case the user cancels the edit
-            let originalPostContent = postContentItem.text();
-
-            // Create save & cancel button
-            var saveButton = $('<button>', {
-                id: 'saveButton-' + postId,
-                text: 'Save',
-                class: 'btn btn-success btn-sm mt-2 me-2 mb-4',
-                type: 'submit',
-                click: function () {
-                    savePost(postId);
-                }
-            });
-
-            var cancelButton = $('<button>', {
-                id: 'cancelButton-' + postId,
-                text: 'Cancel',
-                class: 'btn btn-secondary btn-sm mt-2 mb-4',
-                click: function () {
-                    leaveEditMode(postId, originalPostContent);
-                }
-            });
-
-            var charCountText = $('<span>', {
-                id: 'charCount-' + postId,
-                text: postContentItem.text().length + '/' + postCharacterLimit + ' chars',
-                class: 'text-muted small d-flex'
-            });
-            
-            postContentItem.on('input', function () {
-                // Update character count text
-                charCountText.text(postContentItem.text().length + '/' + postCharacterLimit + ' chars ');
-
-                // Disable save button if content length exceeds char limit
-                saveButton.prop('disabled', postContentItem.text().length > postCharacterLimit);
-            });
-
-            // Add objects to post (adding order matters)
-            postContentItem.after(cancelButton);
-            postContentItem.after(saveButton);
-            postContentItem.after(charCountText);
-        },
-        error: function (error) {
-            console.error("Error fetching post character limit: ", error);
-        }
+    // Attach listener to each delete field
+    editFields.forEach(function (editField) {
+        editField.addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent page from scrolling to top because of href="#"
+            var postId = editField.id.split('-')[1];
+            postEdit(postId, );
+        });
     });
-}
+});
 
-function savePost(postId, originalPostContent) {
-    var editedContent = $('#postContent-' + postId).text();
+function postEdit(postId) {
+    var saveButton = document.getElementById('editContent-button-save-' + postId);
+    var cancelButton = document.getElementById('editContent-button-cancel-' + postId);
 
-    var postData = {
-        PostId: postId,
-        EditedContent: editedContent
-    };
+    var charContainer = document.getElementById('editContent-charcounter-container-' + postId);
+    var charCountText = document.getElementById('editContent-chars-' + postId);
+    var charLimit = postCharLimit; // Defined in Index.cshtml
 
-    // AJAX request to save the edited content
-    $.ajax({
-        url: '/Home/EditPost',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(postData),
-        dataType: 'json',
-        success: function (data) {
-            if (data.success) {
-                $('#postContent-' + postId).text(editedContent);
-                console.error('3');
-            }
-            leaveEditMode(postId)
-        },
-        error: function (xhr, status, error) {
-            console.error('Error editing post:', error);
-            leaveEditMode(postId, originalPostContent)
-        }
+    var menuButton = document.getElementById('postMenuButton-' + postId);
+    var editField = document.getElementById('editContent-editField-' + postId);
+    
+    saveButton.removeAttribute('disabled');
+    cancelButton.removeAttribute('disabled');
+    charCountText.textContent = editField.value.length;
+    
+    editField.readOnly = false;
+    editField.classList.add('input-field');
+    editField.focus();
+    
+    saveButton.classList.remove('d-none');
+    cancelButton.classList.remove('d-none');
+    charContainer.classList.remove('d-none');
+    
+    menuButton.classList.add('d-none');
+
+    // Save the original post content in case user cancels the edit
+    let originalPostContent = editField.value;
+    
+    cancelButton.addEventListener('click', function (event) {
+        leaveEditMode(postId, originalPostContent);
+    });
+    
+
+    editField.addEventListener('input', function () {
+        // Update character count text
+        charCountText.textContent = editField.value.length;
+
+        // Disable save button if content length exceeds char limit
+        saveButton.disabled = editField.value.length > charLimit;
     });
 }
 
 function leaveEditMode(postId, originalPostContent) {
-    let postContentItem = $('#postContent-' + postId);
-    $('#postMenuButton-' + postId).show();
-    $('#saveButton-' + postId).remove();
-    $('#cancelButton-' + postId).remove();
-    $('#charCount-' + postId).remove();
+    var saveButton = document.getElementById('editContent-button-save-' + postId);
+    var cancelButton = document.getElementById('editContent-button-cancel-' + postId);
 
-    postContentItem.attr('contenteditable', false);
-    postContentItem.css({
-        'background-color': '',
-        'border-radius': '',
-        'padding': '',
-        'outline': ''
-    });
-    postContentItem.text(originalPostContent);
+    var charContainer = document.getElementById('editContent-charcounter-container-' + postId);
+    var charCountText = document.getElementById('editContent-chars-' + postId);
 
+    var menuButton = document.getElementById('postMenuButton-' + postId);
+    var editField = document.getElementById('editContent-editField-' + postId);
+    
+    saveButton.classList.add('d-none');
+    saveButton.disabled = true;
+    cancelButton.classList.add('d-none');
+    cancelButton.disabled = true;
+    charContainer.classList.add('d-none');
+
+    menuButton.classList.remove('d-none');
+
+    charCountText.textContent = 0;
+    editField.readOnly = true;
+    editField.classList.remove('input-field');
+    editField.value = originalPostContent;
 }
 

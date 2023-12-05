@@ -3,17 +3,16 @@
 <div class="col-md-6 offset-md-3 mb-3">
     <form action="/Home/CreatePost" method="post">
         <div class="mb-3">
-            <input name="content" type="text" class="form-control shadow-none input-field" id="postContent-publishField" placeholder="what's on your mind..." aria-describedby="content post field">
+            <input name="content" type="text" class="form-control shadow-none input-field" id="postContent-publishField" placeholder="what's on your mind..." aria-describedby="content post field" readonly>
             <div class="form-text">
-                <p><span id="postContent-chars">0</span>/<span id="postContent-chars-limit">@Model</span> chars</p>
+                <p><span id="postContent-chars">0</span>/@Model chars</p>
             </div>
         </div>
-        <button class="btn btn-success btn-sm mb-4 me-2" id="postContent-button-publish" type="submit" onclick="postPublish()">
+        <button class="btn btn-success btn-sm mb-4 me-2" id="postContent-button-publish" type="submit">
             <i class="fas fa-arrow-up"></i> Publish Post
         </button>
-        <button class="btn btn-secondary btn-sm mb-4" type="button" onclick="postCancel()">Cancel</button>
+        <button id="postContent-button-cancel"class="btn btn-secondary btn-sm mb-4" type="button">Cancel</button>
     </form>
 </div>
 
 <script src="js/Home/Post/postCancel.js"></script>
-<script src="js/Home/Post/postPublish.js"></script>

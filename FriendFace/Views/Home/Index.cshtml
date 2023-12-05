@@ -24,7 +24,7 @@
             <label class="btn btn-outline-primary" for="profile-feed">My Published Posts</label>
         </div>
 
-        <button id="post-btn" type="button" class="btn btn-outline-primary btn-sm " onclick="postCreate()">
+        <button id="post-btn" type="button" class="btn btn-outline-primary btn-sm ">
             <i class="fas fa-plus"></i> Create Post
         </button>
     </div>
@@ -43,5 +43,10 @@
 </div>
 <script src="js/Home/Post/postCreate.js"></script>
 <script src="js/Home/toggleFeed.js"></script>
+
+<script>
+    var postCharLimit = @Model.PostCharLimit;
+</script>
+
 </body>
 </html>

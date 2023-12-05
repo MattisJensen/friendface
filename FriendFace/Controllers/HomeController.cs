@@ -52,7 +52,7 @@ namespace FriendFace.Controllers
 
         public IActionResult Index()
         {
-            var loggedInUser = _userQueryService.GetLoggedInUser().Result;
+            var loggedInUser = _userQueryService.GetLoggedInUser();
             if (loggedInUser == null)
             {
                 return RedirectToAction("Login", "Login");
@@ -81,14 +81,14 @@ namespace FriendFace.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-        [HttpPost]
-        public IActionResult ToggleLikePost([FromBody] int postId)
+        
+        [HttpGet]
+        public IActionResult ToggleLikePost(int postId)
         {
             _postService.ToggleLikePost(postId);
-            return Ok();
+            return RedirectToAction("Index");
         }
-
+        
         [HttpGet]
         public IActionResult GetPostLikes([FromQuery] int postId)
         {
@@ -104,10 +104,10 @@ namespace FriendFace.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditPost([FromBody] PostIdContentModel model)
+        public IActionResult EditPost(PostIdContentModel model)
         {
             var result = _postService.EditPost(model);
-            return Json(result);
+            return RedirectToAction("Index");
         }
 
         [HttpGet]

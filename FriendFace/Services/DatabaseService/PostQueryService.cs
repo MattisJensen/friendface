@@ -34,7 +34,7 @@ public class PostQueryService
         return _context.Posts
             .Include(p => p.User)
             .Include(p => p.Likes)
-            .Include(p => p.Comments)
+            .Include(p => p.Comments.OrderBy(c => c.Time))
             .Where(p => !p.IsDeleted)
             .FirstOrDefault(p => p.Id == postId) ?? throw new NullReferenceException();
     }
@@ -44,7 +44,7 @@ public class PostQueryService
         return _context.Posts
             .Include(p => p.User)
             .Include(p => p.Likes)
-            .Include(p => p.Comments)
+            .Include(p => p.Comments.OrderBy(c => c.Time))
             .Where(p => p.UserId == userId)
             .Where(p => !p.IsDeleted)
             .OrderByDescending(p => p.Time)
@@ -56,7 +56,7 @@ public class PostQueryService
         return _context.Posts
             .Include(p => p.User)
             .Include(p => p.Likes)
-            .Include(p => p.Comments)
+            .Include(p => p.Comments.OrderBy(c => c.Time))
             .ThenInclude(c => c.User)
             .Where(p => p.UserId == userId)
             .Where(p => !p.IsDeleted)
@@ -86,7 +86,7 @@ public class PostQueryService
         return _context.Posts
             .Include(p => p.User)
             .Include(p => p.Likes)
-            .Include(p => p.Comments)
+            .Include(p => p.Comments.OrderBy(c => c.Time))
             .ThenInclude(c => c.User)
             .Where(p => followingUserIds.Contains(p.UserId))
             .Where(p => !p.IsDeleted)

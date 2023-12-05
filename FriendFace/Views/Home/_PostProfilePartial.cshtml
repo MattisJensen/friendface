@@ -3,7 +3,7 @@
 @model FriendFace.ViewModels.HomeIndexViewModel
 
 @foreach (var post in Model.PostsByLoggedInUser)
-{ 
+{
     <div id="postContainer-@post.Id" class="col-md-6 offset-md-3 mb-3">
         <div class="card">
             <div class="card-header" style="background-color: #f8f8f8">
@@ -23,7 +23,17 @@
             </div>
             <div class="card-body">
                 @* The content of the post *@
-                <p id="postContent-@post.Id" contenteditable="false" class="card-text text-left">@post.Content</p>
+                <form action="/Home/EditPost" method="post">
+                    <input type="hidden" id="editContent-@post.Id" name="PostId" value="@post.Id" readonly>
+                    <input class="form-control-plaintext shadow-none" type="text" id="editContent-editField-@post.Id" name="Content" value="@post.Content" readonly>
+
+                    <div id="editContent-charcounter-container-@post.Id" class="form-text d-none">
+                        <p><span id="editContent-chars-@post.Id">0</span>/@Model.PostCharLimit chars</p>
+                    </div>
+
+                    <button class="btn btn-success btn-sm mb-4 me-2 d-none" id="editContent-button-save-@post.Id" type="submit" disabled>Save</button>
+                    <button id="editContent-button-cancel-@post.Id" class="btn btn-secondary btn-sm mb-4 d-none" type="button" disabled>Cancel</button>
+                </form>
 
                 @* Date and icons *@
                 <div class="d-flex justify-content-between align-items-center">
@@ -35,7 +45,7 @@
                             string heartIcon = GetHeartIcon(isLiked);
                             string heartIconColor = isLiked ? "red" : "inherit";
                         }
-                        <i class="@heartIcon" style="color: @heartIconColor; cursor: pointer;" data-post-id="@post.Id" onclick="toggleLikeOfPost(this)"></i>
+                        <a class="@heartIcon text-decoration-none cursor-pointer" style="color: @heartIconColor" data-post-id="@post.Id" href="/Home/ToggleLikePost?postId=@post.Id"></a>
                         <span id="likeCount-@post.Id">@post.Likes.Count</span>
                         <i class="far fa-comment"></i> @post.Comments.Count
                     </span>
@@ -51,5 +61,3 @@
 @functions {
     string GetHeartIcon(bool isLiked) => isLiked ? "fas fa-heart" : "far fa-heart";
 }
-
-<script src="js/Home/toggleLikeOfPost.js"></script>

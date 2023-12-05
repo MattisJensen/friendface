@@ -17,7 +17,7 @@ public class UserQueryService
         _signInManager = signInManager;
     }
 
-    public async Task<User> GetLoggedInUser()
+    public User GetLoggedInUser()
     {   
         // Check if user is logged in
         if (_signInManager.IsSignedIn(_signInManager.Context.User))
@@ -31,7 +31,6 @@ public class UserQueryService
             // User is not logged in
             return null;
         }
-        
     }
     
     public User GetUserById(int userId)

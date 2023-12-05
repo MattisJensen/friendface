@@ -2,7 +2,7 @@
 
 @model  ICollection<Comment>
 
-@foreach (var comment in Model.OrderByDescending(c => c.Time))
+@foreach (var comment in Model)
 {
     <div class="card mt-1">
         <div class="card-body">

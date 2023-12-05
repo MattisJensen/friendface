@@ -2,16 +2,6 @@
 
 @model FriendFace.ViewModels.HomeIndexViewModel
 
-@* @List<Post> posts = null; *@
-@* *@
-@* @if () *@
-@* { *@
-@*     posts = Model.PostsInFeed; *@
-@* } *@
-@* else *@
-@* { *@
-@*     posts = Model.PostsByLoggedInUser; *@
-@* } *@
 @foreach (var post in Model.PostsInFeed)
 {
     <div id="postContainer-@post.Id" class="col-md-6 offset-md-3 mb-3">
@@ -45,7 +35,7 @@
                             string heartIcon = GetHeartIcon(isLiked);
                             string heartIconColor = isLiked ? "red" : "inherit";
                         }
-                        <i class="@heartIcon" style="color: @heartIconColor; cursor: pointer;" data-post-id="@post.Id" onclick="toggleLikeOfPost(this)"></i>
+                        <a class="@heartIcon text-decoration-none cursor-pointer" style="color: @heartIconColor" data-post-id="@post.Id" href="/Home/ToggleLikePost?postId=@post.Id"></a>
                         <span id="likeCount-@post.Id">@post.Likes.Count</span>
                         <i class="far fa-comment comment-btn" id="comment-btn-@post.Id" data-post-id="@post.Id" style="cursor: pointer;"></i> @post.Comments.Count
                     </span>
@@ -55,7 +45,7 @@
                 <partial name="_CommentPartial" model="post.Comments"/>
                 <div id="commentCreateContainer-@post.Id" style="display: none">
                     <div class="col-md-6 offset-md-3 mb-3">
-                        <p id="commentContent-create-@post.Id" contenteditable="false" class="card-text text-left" style="background-color: rgb(231, 231, 231); border-radius: 4px; padding: 10px; outline: 0;"></p>
+                        <p id="commentContent-create-@post.Id" contenteditable="false" class="card-text text-left input-field"></p>
                     </div>
                 </div>
             </div>
@@ -67,5 +57,4 @@
     string GetHeartIcon(bool isLiked) => isLiked ? "fas fa-heart" : "far fa-heart";
 }
 
-<script src="js/Home/toggleLikeOfPost.js"></script>
 <script src="js/Home/createComment.js"></script>

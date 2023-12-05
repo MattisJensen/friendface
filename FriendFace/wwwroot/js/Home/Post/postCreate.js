@@ -1,13 +1,23 @@
+document.addEventListener('DOMContentLoaded', function() {
+    var postButton = $('#post-btn');
+
+    postButton.on('click', function(event) {
+        postCreate();
+    });
+});
+
 function postCreate() {
     $('#postCreateContainer').show();
     $('#post-btn').attr('disabled', true);
+    let publishButton = $('#postContent-button-publish');
+    publishButton.removeAttr('disabled')
 
     let postContentPublishField = $('#postContent-publishField');
     postContentPublishField.focus();
+    postContentPublishField.get(0).readOnly = false;
     
     let charsInPublishFieldPlaceholder = $('#postContent-chars');
-    let charLimit = Number($('#postContent-chars-limit').text());
-    let publishButton = $('#postContent-button-publish');
+    let charLimit = postCharLimit;
 
     postContentPublishField.on('input', function () {
         // Update character count text

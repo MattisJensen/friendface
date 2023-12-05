@@ -7,10 +7,10 @@
         <i class="fas fa-ellipsis-v"></i>
     </button>
     <div class="dropdown-menu " aria-labelledby="postMenuButton">
-        <a class="dropdown-item" href="#" onclick="postEdit(@Model.Id)">Edit</a>
-        <a id="deleteField-@Model.Id" class="dropdown-item" href="/Home/DeletePost?postId=@Model.Id">Delete</a>
+        <a id="editField-@Model.Id" class="dropdown-item" href="#">Edit</a>
+        <a id="deleteField-@Model.Id" class="dropdown-item" href="#">Delete</a>
     </div>
 </div>
 
-<script src="js/Home/Post/postDelete.js"></script>
 <script src="js/Home/Post/postEdit.js"></script>
+<script src="js/Home/Post/postDelete.js"></script>
