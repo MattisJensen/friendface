@@ -1,4 +1,4 @@
-function deletePost(postId) {
+function postDelete(postId) {
 
     event.stopPropagation();
 

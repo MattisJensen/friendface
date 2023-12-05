@@ -1,4 +1,4 @@
-function publishPost() {
+function postPublish() {
     const postContentPublishField = $('#postContent-publishField');
 
     $.ajax({
