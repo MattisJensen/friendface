@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var deleteFields = document.querySelectorAll('[id^="deleteField-"]');
+    var deleteFields = $('[id^="deleteField-"]');
 
     // Attach listener to each delete field
-    deleteFields.forEach(function (deleteField) {
-        deleteField.addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent page from scrolling to top because of href="#"
-            var postId = deleteField.id.split('-')[1];
-            postDelete(deleteField, postId);
+    deleteFields.each(function () {
+        $(this).on('click', function (event) {
+            event.preventDefault();
+            var postId = this.id.split('-')[1];
+            postDelete($(this), postId);
         });
     });
 });
@@ -16,29 +16,31 @@ function postDelete(deleteField, postId) {
     event.stopPropagation(); // Prevents dropdown from closing
 
     // Changes text and turn it red
-    deleteField.innerText = 'Confirm';
-    deleteField.style.color = 'rgb(255,255,255)';
-    deleteField.style.backgroundColor = 'rgb(220,53,69)';
+    deleteField.text('Confirm');
+    deleteField.css('color', 'rgb(255,255,255)');
+    deleteField.css('backgroundColor', 'rgb(220,53,69)');
 
 
     // Add listener to execute delete request
-    deleteField.addEventListener('click', deleteRequest);
-
+    deleteField.on('click', deleteRequest);
+    
     // Add listener to reset the delete text when the dropdown is closed
-    document.addEventListener('click', function (e) {
-        if (!e.target.closest('.dropdown-menu')) resetDeleteText(postId); // Checks if click is outside of dropdown menu
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.dropdown-menu').length) {
+            resetDeleteText(postId, deleteField);
+        }
     });
 
     function deleteRequest() {
         window.location.href = '/Home/DeletePost?postId=' + postId;
     }
 
-    function resetDeleteText(postId) {
-        deleteField.innerText = 'Delete';
+    function resetDeleteText(postId, deleteField) {
+        deleteField.text('Delete');
         // reset color to default
-        deleteField.style.color = '';
-        deleteField.style.backgroundColor = '';
+        deleteField.css('color', '');
+        deleteField.css('backgroundColor', '');
 
-        deleteField.removeEventListener('click', deleteRequest);
+        deleteField.off('click', deleteRequest);
     }
 }

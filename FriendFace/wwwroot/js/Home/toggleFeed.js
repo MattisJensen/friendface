@@ -1,9 +1,21 @@
-function toggleFeed(feed) {
-    if (feed === 'Feed') {
-        $('#feed').show();
-        $('#profile').hide();
-    } else if (feed === 'Profile') {
-        $('#feed').hide();
-        $('#profile').show();
-    }
+document.addEventListener('DOMContentLoaded', function () {
+    var followingFeedButton = $('#following-feed');
+    followingFeedButton.on('click', function (event) {
+        followingFeed();
+    });
+    
+    var profileFeedButton = $('#profile-feed');
+    profileFeedButton.on('click', function (event) {
+        profileFeed();
+    });
+});
+
+function followingFeed() {
+    $('#feed').show();
+    $('#profile').hide();
+}
+
+function profileFeed() {
+    $('#feed').hide();
+    $('#profile').show();
 }

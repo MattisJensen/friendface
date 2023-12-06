@@ -23,7 +23,7 @@
             </div>
             <div class="card-body">
                 @* The content of the post *@
-                <form action="/Home/EditPost" method="post">
+                <form id="editContent-form">
                     <input type="hidden" id="editContent-@post.Id" name="PostId" value="@post.Id" readonly>
                     <input class="form-control-plaintext shadow-none" type="text" id="editContent-editField-@post.Id" name="Content" value="@post.Content" readonly>
 

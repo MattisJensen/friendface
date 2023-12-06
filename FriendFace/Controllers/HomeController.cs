@@ -99,24 +99,17 @@ namespace FriendFace.Controllers
         [HttpGet]
         public IActionResult DeletePost(int postId)
         {
-            var result = _postService.DeletePost(postId);
+            _postService.DeletePost(postId);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public IActionResult EditPost(PostIdContentModel model)
         {
-            var result = _postService.EditPost(model);
+            _postService.EditPost(model);
             return RedirectToAction("Index");
         }
-
-        [HttpGet]
-        public IActionResult GetPostCharLimit()
-        {
-            var result = _postQueryService.GetPostCharacterLimit();
-            return Json(result);
-        }
-
+        
         [HttpPost]
         public IActionResult CreatePost(string content)
         {

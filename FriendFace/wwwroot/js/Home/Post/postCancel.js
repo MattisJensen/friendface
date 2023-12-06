@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
-    var cancelButton = document.getElementById('postContent-button-cancel');
+    var cancelButton = $('#postContent-button-cancel');
 
-    cancelButton.addEventListener('click', function(event) {
+    cancelButton.on('click', function(event) {
         postCancel();
     });
 });

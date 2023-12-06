@@ -1,7 +1,11 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+    var form = $('#postContent-form');
+    form.attr('action', "/Home/CreatePost");
+    form.attr('method', "post");
+
     var postButton = $('#post-btn');
 
-    postButton.on('click', function(event) {
+    postButton.on('click', function (event) {
         postCreate();
     });
 });
@@ -15,7 +19,7 @@ function postCreate() {
     let postContentPublishField = $('#postContent-publishField');
     postContentPublishField.focus();
     postContentPublishField.get(0).readOnly = false;
-    
+
     let charsInPublishFieldPlaceholder = $('#postContent-chars');
     let charLimit = postCharLimit;
 
