@@ -36,11 +36,15 @@
 
 @* Posts in feed *@
 <div id="feed">
+    @{ ViewData["list"] = "feed"; }
     <partial name="_PostFeedPartial" model="Model" hidden="false"/>
 </div>
+
 <div id="profile" style="display: none">
-    <partial name="_PostProfilePartial" model="Model" hidden="true"/>
+    @{ ViewData["list"] = "profile"; }
+    <partial name="_PostFeedPartial" model="Model" hidden="true"/>
 </div>
+
 <script src="js/Home/Post/postCreate.js"></script>
 <script src="js/Home/toggleFeed.js"></script>
 

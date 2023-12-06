@@ -1,8 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var form = $('#postContent-form');
-    form.attr('action', "/Home/CreatePost");
-    form.attr('method', "post");
-
     var postButton = $('#post-btn');
 
     postButton.on('click', function (event) {
@@ -11,6 +7,10 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function postCreate() {
+    var form = $('#postContent-form');
+    form.attr('action', "/Home/CreatePost");
+    form.attr('method', "post");
+    
     $('#postCreateContainer').show();
     $('#post-btn').attr('disabled', true);
     let publishButton = $('#postContent-button-publish');

@@ -1,8 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var form = $('#editContent-form');
-    form.action = "/Home/EditPost";
-    form.method = "post";
-
     var editFields = $('[id^="editField-"]');
 
     // Attach listener to each delete field
@@ -25,6 +21,10 @@ function postEdit(postId) {
 
     var menuButton = $('#postMenuButton-' + postId);
     var editField = $('#editContent-editField-' + postId);
+
+    var form = $('#editContent-form-' + postId);
+    form.attr('action', "/Home/EditPost");
+    form.attr('method', "post");
 
     saveButton.removeAttr('disabled');
     cancelButton.removeAttr('disabled');

@@ -2,7 +2,11 @@
 
 @model FriendFace.ViewModels.HomeIndexViewModel
 
-@foreach (var post in Model.PostsInFeed)
+@{
+    var postList = ViewData["list"] as string == "feed" ? Model.PostsInFeed : Model.PostsByLoggedInUser;
+}
+
+@foreach (var post in postList)
 {
     <div id="postContainer-@post.Id" class="col-md-6 offset-md-3 mb-3">
         <div class="card">
@@ -23,7 +27,17 @@
             </div>
             <div class="card-body">
                 @* The content of the post *@
-                <p id="postContent-@post.Id" contenteditable="false" class="card-text text-left">@post.Content</p>
+                <form id="editContent-form-@post.Id">
+                    <input type="hidden" id="editContent-@post.Id" name="PostId" value="@post.Id" readonly>
+                    <input class="form-control-plaintext shadow-none" type="text" id="editContent-editField-@post.Id" name="Content" value="@post.Content" readonly>
+
+                    <div id="editContent-charcounter-container-@post.Id" class="form-text d-none">
+                        <p><span id="editContent-chars-@post.Id">0</span>/@Model.PostCharLimit chars</p>
+                    </div>
+
+                    <button class="btn btn-success btn-sm mb-4 me-2 d-none" id="editContent-button-save-@post.Id" type="submit" disabled>Save</button>
+                    <button id="editContent-button-cancel-@post.Id" class="btn btn-secondary btn-sm mb-4 d-none" type="button" disabled>Cancel</button>
+                </form>
 
                 @* Date and icons *@
                 <div class="d-flex justify-content-between align-items-center">

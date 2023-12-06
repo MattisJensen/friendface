@@ -8,10 +8,10 @@ public class CommentCreateService
     private readonly ApplicationDbContext _context;
     private readonly PostQueryService _postQueryService;
 
-    public CommentCreateService(ApplicationDbContext context)
+    public CommentCreateService(ApplicationDbContext context, PostQueryService postQueryService)
     {
         _context = context;
-        _postQueryService = new PostQueryService(context);
+        _postQueryService = postQueryService;
     }
 
     public bool CreateComment(string content, int postId, User sourceUser)

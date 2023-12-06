@@ -157,7 +157,7 @@ public class PostService
                 {
                     var latestPost = _postQueryService.GetLatestPostFromUserId(loggedInUser.Id);
 
-                    var postPartialHtml = RenderViewToString(controllerContext, "_PostProfilePartial",
+                    var postPartialHtml = RenderViewToString(controllerContext, "_PostFeedPartial",
                         new HomeIndexViewModel
                         {
                             PostsByLoggedInUser = new List<Post> { latestPost },
