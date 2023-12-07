@@ -1,4 +1,4 @@
-﻿@model YourProject.ViewModels.EditProfileViewModel
+﻿@model FriendFace.ViewModels.UserProfileViewModel
 
 @{
     ViewBag.Title = "Edit Profile";
@@ -11,40 +11,20 @@
     @Html.AntiForgeryToken()
 
     <div class="form-group">
-        @Html.LabelFor(m => m.FirstName)
-        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.FirstName)
+        @Html.LabelFor(m => m.user.FirstName)
+        @Html.TextBoxFor(m => m.user.FirstName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.user.FirstName)
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(m => m.LastName)
-        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.LastName)
+        @Html.LabelFor(m => m.user.LastName)
+        @Html.TextBoxFor(m => m.user.LastName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.user.LastName)
     </div>
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.Email)
-        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Email)
-    </div>
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.Bio)
-        @Html.TextAreaFor(m => m.Bio, new { @class = "form-control", rows = "5" })
-        @Html.ValidationMessageFor(m => m.Bio)
-    </div>
+    
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.ProfilePicture)
-        <div>
-            <img src="@Url.Content(Model.ProfilePicturePath)" alt="Profile Picture" width="150" />
-            <input type="file" name="ProfilePicture" />
-        </div>
-    </div>
 
     <button type="submit" class="btn btn-primary">Save Changes</button>
-}
-
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
 }

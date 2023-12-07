@@ -1,20 +1,21 @@
-﻿
-
-public class EditProfileViewModel
-
+﻿namespace FriendFace.ViewModels
 {
 
-    public string FirstName { get; set; }
 
-    public string LastName { get; set; }
+    public class UserProfileViewModel
 
-    public string Email { get; set; }
+    {
 
-    public string Bio { get; set; }
+        public User user { get; set; }
 
-    // This will be used just to display the existing profile picture
-    public string ProfilePicturePath { get; set; }
+        public bool isCurrentUser { get; set; }
+  
 
-    // This will be used to upload a new profile picture
-    // public HttpPostedFileBase ProfilePicture { get; set; }
+
+        // This will be used just to display the existing profile picture
+
+        // This will be used to upload a new profile picture
+        // public HttpPostedFileBase ProfilePicture { get; set; }
+    }
+
 }

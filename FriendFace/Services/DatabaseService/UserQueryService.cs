@@ -40,7 +40,13 @@ public class UserQueryService
             .Include(u => u.Followers) // Load the users following UserA
             .FirstOrDefault(u => u.Id == userId) ?? throw new InvalidOperationException();
     }
-    
+
+    public User GetSimpleUserById(int userId)
+    {
+        return _context.Users
+            .FirstOrDefault(u => u.Id == userId);
+    }
+
     public List<int> GetFollowingUserIds(int userId)
     {
         var user = GetUserById(userId);
