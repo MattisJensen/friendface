@@ -1,16 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var likeFields = $('[id^="likeField-"]');
+    var likeButtons = $('[id^="likeButton-"]');
 
     // listener for each like field
-    likeFields.each(function () {
+    likeButtons.each(function () {
         $(this).on('click', function (event) {
-            event.preventDefault(); // Prevent page from scrolling to top because of href="#"
             var postId = this.id.split('-')[1];
-            toggleLike($(this), postId);
+            toggleLike(postId);
         });
     });
 });
 
-function toggleLike(deleteField, postId) {
-    window.location.href = '/Home/DeletePost?postId=' + postId;
+function toggleLike(postId) {
+    window.location.href = '/Home/ToggleLikePost?postId=' + postId;
 }

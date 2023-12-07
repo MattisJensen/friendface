@@ -49,7 +49,7 @@
                             string heartIcon = GetHeartIcon(isLiked);
                             string heartIconColor = isLiked ? "red" : "inherit";
                         }
-                        <a class="@heartIcon text-decoration-none cursor-pointer" style="color: @heartIconColor" data-post-id="@post.Id" href="/Home/ToggleLikePost?postId=@post.Id"></a>
+                        <i class="@heartIcon text-decoration-none cursor-pointer" id="likeButton-@post.Id" style="color: @heartIconColor" ></i>
                         <span id="likeCount-@post.Id">@post.Likes.Count</span>
                         <i class="far fa-comment comment-btn" id="comment-btn-@post.Id" data-post-id="@post.Id" style="cursor: pointer;"></i> @post.Comments.Count
                     </span>
@@ -72,3 +72,4 @@
 }
 
 <script src="js/Home/createComment.js"></script>
+<script src="js/Home/Post/postToggleLike.js"></script>
