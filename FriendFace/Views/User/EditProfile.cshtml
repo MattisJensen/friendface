@@ -1,0 +1,50 @@
+﻿@model YourProject.ViewModels.EditProfileViewModel
+
+@{
+    ViewBag.Title = "Edit Profile";
+}
+
+<h2>Edit Profile</h2>
+
+@using (Html.BeginForm("EditProfile", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.FirstName)
+        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.FirstName)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.LastName)
+        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.LastName)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email)
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Email)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Bio)
+        @Html.TextAreaFor(m => m.Bio, new { @class = "form-control", rows = "5" })
+        @Html.ValidationMessageFor(m => m.Bio)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.ProfilePicture)
+        <div>
+            <img src="@Url.Content(Model.ProfilePicturePath)" alt="Profile Picture" width="150" />
+            <input type="file" name="ProfilePicture" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
