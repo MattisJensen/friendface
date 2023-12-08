@@ -31,9 +31,7 @@ namespace FriendFace.Controllers
         private readonly RazorViewEngine _razorViewEngine;
         private readonly ITempDataProvider _tempDataProvider;
 
-        //BOOL FOR AUTHENTICATION CHECKING
-
-        private readonly Boolean isLoggedIn = false;
+      
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context,
             UserQueryService userQueryService, PostQueryService postQueryService,
@@ -57,7 +55,9 @@ namespace FriendFace.Controllers
         public IActionResult Index()
         {
 
-            if(!isLoggedIn)
+            
+            var loggedInUser = _userQueryService.GetLoggedInUser();
+            if (loggedInUser == null)
             {
                 var topLikedPosts = _postQueryService.GetPostsByLikes(5);
 
@@ -66,12 +66,6 @@ namespace FriendFace.Controllers
                     TopLikedPosts = topLikedPosts
                 };
                 return View("GuestIndex", guestViewModel);
-            }
-
-            var loggedInUser = _userQueryService.GetLoggedInUser();
-            if (loggedInUser == null)
-            {
-                return RedirectToAction("Login", "Login");
             }
             var postsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id);
             var postsByLoggedInUser = _postQueryService.GetPostsFromUserId(loggedInUser.Id);
