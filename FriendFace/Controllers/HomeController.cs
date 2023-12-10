@@ -20,10 +20,6 @@ namespace FriendFace.Controllers
         private readonly ApplicationDbContext _context;
 
         private readonly UserQueryService _userQueryService;
-        private readonly UserCreateService _userCreateService;
-        private readonly PostQueryService _postQueryService;
-        private readonly PostDeleteService _postDeleteService;
-        private readonly PostCreateService _postCreateService;
         
         private readonly CommentService _commentService;
         private readonly PostService _postService;
@@ -32,21 +28,14 @@ namespace FriendFace.Controllers
         private readonly ITempDataProvider _tempDataProvider;
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context,
-            UserQueryService userQueryService, PostQueryService postQueryService,
-            PostDeleteService postDeleteService, PostCreateService postCreateService,
-            UserCreateService userCreateService, PostService postService, CommentService commentService)
+            UserQueryService userQueryService, PostService postService, CommentService commentService)
         {
             _logger = logger;
             _context = context;
 
             _userQueryService = userQueryService;
-            _userCreateService = userCreateService;
-            _postQueryService = postQueryService;
-            _postDeleteService = postDeleteService;
-            _postCreateService = postCreateService;
-
+            
             _postService = postService;
-
             _commentService = commentService;
         }
 
@@ -57,18 +46,10 @@ namespace FriendFace.Controllers
             {
                 return RedirectToAction("Login", "Login");
             }
-            var postsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id);
-            var postsByLoggedInUser = _postQueryService.GetPostsFromUserId(loggedInUser.Id);
-            var postCharLimit = _postQueryService.GetPostCharacterLimit();
-
-            var homeIndexViewModel = new HomeIndexViewModel
-            {
-                User = loggedInUser,
-                PostsInFeed = postsInFeed,
-                PostsByLoggedInUser = postsByLoggedInUser,
-                PostCharLimit = postCharLimit
-            };
-            return View(homeIndexViewModel);
+            
+            var model = _postService.GetHomeIndexViewModel();
+            
+            return View(model);
         }
 
         public IActionResult Privacy()

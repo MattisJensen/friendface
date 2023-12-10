@@ -1,5 +1,6 @@
 using FriendFace.Data;
 using FriendFace.Models;
+using FriendFace.Services;
 using FriendFace.Services.DatabaseService;
 using FriendFace.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,25 @@ public class PostService
         _postUpdateService = postUpdateService;
         _postDeleteService = postDeleteService;
         _userQueryService = userQueryService;
+    }
+    
+    public HomeIndexViewModel GetHomeIndexViewModel()
+    {
+        var loggedInUser = _userQueryService.GetLoggedInUser();
+
+        var postsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id);
+        var postsByLoggedInUser = _postQueryService.GetPostsFromUserId(loggedInUser.Id);
+        var postCharLimit = _postQueryService.GetPostCharacterLimit();
+
+        var model = new HomeIndexViewModel
+        {
+            User = loggedInUser,
+            PostsInFeed = postsInFeed,
+            PostsByLoggedInUser = postsByLoggedInUser,
+            PostCharLimit = postCharLimit
+        };
+
+        return model;
     }
 
     public void ToggleLikePost(int postId)
@@ -157,7 +177,7 @@ public class PostService
                 {
                     var latestPost = _postQueryService.GetLatestPostFromUserId(loggedInUser.Id);
 
-                    var postPartialHtml = RenderViewToString(controllerContext, "_PostFeedPartial",
+                    var postPartialHtml = FileLoader.LoadFile(controllerContext, "_PostFeedPartial",
                         new HomeIndexViewModel
                         {
                             PostsByLoggedInUser = new List<Post> { latestPost },
@@ -180,37 +200,6 @@ public class PostService
         catch (Exception ex)
         {
             throw new Exception("An error occurred while creating the post.", ex);
-        }
-    }
-
-    private string RenderViewToString(ControllerContext controllerContext, string viewName, object model)
-    {
-        using (var sw = new StringWriter())
-        {
-            var engine = controllerContext.HttpContext.RequestServices.GetRequiredService<IRazorViewEngine>();
-            var viewResult = engine.FindView(controllerContext, viewName, false);
-        
-            if (viewResult.View == null)
-            {
-                throw new ArgumentNullException($"{viewName} does not match any available view");
-            }
-
-            var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
-            {
-                Model = model
-            };
-
-            var viewContext = new ViewContext(controllerContext, viewResult.View,
-                viewDictionary,
-                new TempDataDictionary(controllerContext.HttpContext, controllerContext.HttpContext.RequestServices.GetRequiredService<ITempDataProvider>()),
-                sw,
-                new HtmlHelperOptions());
-
-            var t = viewResult.View.RenderAsync(viewContext);
-
-            t.Wait();
-
-            return sw.GetStringBuilder().ToString();
         }
     }
 }
