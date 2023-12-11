@@ -25,31 +25,21 @@
 
         <div class="card-body">
             @* The content of the post *@
-            <form id="editContent-form-@post.Id">
-                <input type="hidden" id="editContent-@post.Id" name="PostId" value="@post.Id" readonly>
-                <input class="form-control-plaintext shadow-none" type="text" id="editContent-editField-@post.Id" name="Content" value="@post.Content" readonly>
-
-                <div id="editContent-charcounter-container-@post.Id" class="form-text d-none">
-                    <p><span id="editContent-chars-@post.Id">0</span>/@Model.PostCharLimit chars</p>
-                </div>
-
-                <button class="btn btn-success btn-sm mb-4 me-2 d-none" id="editContent-button-save-@post.Id" type="submit" disabled>Save</button>
-                <button id="editContent-button-cancel-@post.Id" class="btn btn-secondary btn-sm mb-4 d-none" type="button" disabled>Cancel</button>
-            </form>
-
+            <p id="postContent-@post.Id">@post.Content</p>
+            
             @* Date and icons *@
             <div class="d-flex justify-content-between align-items-center">
                 <small class="text-muted">@post.Time.ToString("HH:mm dd/MM/yy")</small>
 
-                <span style="font-size: 80%;" class="text-muted">
+                <span class="text-muted small">
                     @{
                         bool isLiked = post.Likes.Any(like => like.UserId == Model.User.Id);
                         string heartIcon = GetHeartIcon(isLiked);
                         string heartIconColor = isLiked ? "red" : "inherit";
                     }
-                    <i class="@heartIcon text-decoration-none cursor-pointer" id="likeButton-@post.Id" style="color: @heartIconColor"></i>
+                    <i class="@heartIcon text-decoration-none pointer" id="likeButton-@post.Id" style="color: @heartIconColor"></i>
                     <span id="likeCount-@post.Id">@post.Likes.Count</span>
-                    <i class="far fa-comment comment-btn" id="comment-btn-@post.Id" data-post-id="@post.Id" style="cursor: pointer;"></i> @post.Comments.Count
+                    <i class="far fa-comment comment-btn pointer" id="comment-btn-@post.Id" data-post-id="@post.Id"></i> @post.Comments.Count
                 </span>
             </div>
 
@@ -61,6 +51,7 @@
         </div>
     </div>
 }
+
 
 @functions {
     string GetHeartIcon(bool isLiked) => isLiked ? "fas fa-heart" : "far fa-heart";

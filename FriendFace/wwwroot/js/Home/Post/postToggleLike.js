@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
+    attachEditFieldListeners();
+});
+
+function attachEditFieldListeners() {
     var likeButtons = $('[id^="likeButton-"]');
+
+    // Remove existing listeners to prevent multiple listeners being attached to one field
+    likeButtons.off('click');
 
     // listener for each like field
     likeButtons.each(function () {
@@ -8,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
             toggleLike(postId);
         });
     });
-});
+}
 
 function toggleLike(postId) {
     window.location.href = '/Home/ToggleLikePost?postId=' + postId;
