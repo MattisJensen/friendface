@@ -1,8 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    attachEditFieldListeners();
-});
-
-function attachEditFieldListeners() {
     var editFields = $('[id^="editField-"]');
 
     // Remove existing listeners to prevent multiple listeners being attached to one field
@@ -13,11 +9,10 @@ function attachEditFieldListeners() {
         $(this).on('click', function (event) {
             event.preventDefault();
             var postId = this.id.split('-')[1];
-            console.log("Edit field clicked for post " + postId);
             addEditForm(postId);
         });
     });
-}
+});
 
 function addEditForm(postId) {
     var postContentField = $('#postContent-' + postId);

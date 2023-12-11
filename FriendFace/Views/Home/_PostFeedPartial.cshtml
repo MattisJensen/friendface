@@ -2,11 +2,7 @@
 
 @model FriendFace.ViewModels.HomeIndexViewModel
 
-@{
-    var postList = ViewData["list"] as string == "feed" ? Model.PostsInFeed : Model.PostsByLoggedInUser;
-}
-
-@foreach (var post in postList)
+@foreach (var post in Model.PostsInFeed)
 {
     <div id="postContainer-@post.Id" class="card col-md-6 offset-md-3 mb-3">
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -57,5 +53,5 @@
     string GetHeartIcon(bool isLiked) => isLiked ? "fas fa-heart" : "far fa-heart";
 }
 
-<script src="js/Home/createComment.js"></script>
-<script src="js/Home/Post/postToggleLike.js"></script>
+<script src="~/js/Home/createComment.js"></script>
+<script src="~/js/Home/Post/postToggleLike.js"></script>

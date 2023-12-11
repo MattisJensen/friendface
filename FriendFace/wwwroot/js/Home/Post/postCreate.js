@@ -1,14 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
-    attachEditFieldListeners();
-});
-
-function attachEditFieldListeners() {
     var postButton = $('#post-btn');
 
     postButton.on('click', function (event) {
         postCreate();
     });
-}
+});
 
 function postCreate() {
     var form = $('#postContent-form');

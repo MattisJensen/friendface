@@ -1,14 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
-    attachEditFieldListeners();
-});
-
-function attachEditFieldListeners() {
     var cancelButton = $('#postContent-button-cancel');
 
     cancelButton.on('click', function (event) {
         postCancel();
     });
-}
+});
 
 function postCancel() {
     $('#postCreateContainer').hide();

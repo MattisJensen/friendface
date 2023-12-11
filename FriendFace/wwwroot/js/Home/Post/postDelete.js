@@ -1,13 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
-    attachEditFieldListeners();
-});
-
-function attachEditFieldListeners() {
     var deleteFields = $('[id^="deleteField-"]');
-    
+
     // Remove existing listeners to prevent multiple listeners being attached to one field
     deleteFields.off('click');
-   
+
     // Attach listener to each delete field
     deleteFields.each(function () {
         $(this).on('click', function (event) {
@@ -16,7 +12,7 @@ function attachEditFieldListeners() {
             postDelete($(this), postId);
         });
     });
-}
+});
 
 function postDelete(deleteField, postId) {
     event.stopPropagation(); // Prevents dropdown from closing

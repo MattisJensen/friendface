@@ -47,9 +47,22 @@ namespace FriendFace.Controllers
                 return RedirectToAction("Login", "Login");
             }
             
-            var model = _postService.GetHomeIndexViewModel();
+            var model = _postService.GetHomeIndexViewModel(true);
             
             return View(model);
+        }
+        
+        public IActionResult IndexWithProfileFeed()
+        {
+            var loggedInUser = _userQueryService.GetLoggedInUser();
+            if (loggedInUser == null)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+            
+            var model = _postService.GetHomeIndexViewModel(false);
+            
+            return View("Index", model);
         }
 
         public IActionResult Privacy()
