@@ -12,7 +12,7 @@
 
 @foreach (var user in Model.Users)
 {
-    <div id="userSearchContainer-@user.Id" class="card col-md-6 offset-md-3 mb-3 pointer">
+    <article id="userSearchContainer-@user.Id" class="card col-md-6 offset-md-3 mb-3 pointer">
         <div class="card-header d-flex justify-content-between align-items-center">
             <span class="text-muted small"> @Html.Raw("@")@user.UserName</span>
             @if (Model.LoggedInUser != null)
@@ -31,7 +31,7 @@
         <div class="card-body">
             <span> @user.FirstName @Html.Raw(" ") @user.LastName</span>
         </div>
-    </div>
+    </article>
 }
 
 <script src="~/js/Search/searchUser.js"></script>
