@@ -31,13 +31,14 @@ namespace FriendFace.Controllers
       
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context,
-            UserQueryService userQueryService, PostService postService, CommentService commentService)
+            UserQueryService userQueryService, PostService postService, CommentService commentService, PostQueryService postQueryService)
         {
             _logger = logger;
             _context = context;
 
             _userQueryService = userQueryService;
-            
+            _postQueryService = postQueryService;
+
             _postService = postService;
             _commentService = commentService;
         }

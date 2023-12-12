@@ -6,30 +6,31 @@ function attachEditFieldListeners() {
     var followButtons = $('[id^="followButton-"]');
     var unfollowButtons = $('[id^="unfollowButton-"]');
     var userSearchContainers = $('[id^="userSearchContainer-"]');
-    // Remove existing listeners to prevent multiple listeners being attached to one field
+
+    // Remove existing listeners
     followButtons.off('click');
     unfollowButtons.off('click');
     userSearchContainers.off('click');
-    
+
     // Attach listener to each follow button
     followButtons.each(function () {
         $(this).on('click', function (event) {
+            event.stopPropagation(); // Prevent event from bubbling up
             var userId = this.id.split('-')[1];
-            var action = "follow";
-            toggleFollow(action, userId);
+            toggleFollow("follow", userId);
         });
     });
 
     // Attach listener to each unfollow button
     unfollowButtons.each(function () {
         $(this).on('click', function (event) {
+            event.stopPropagation(); // Prevent event from bubbling up
             var userId = this.id.split('-')[1];
-            var action = "unfollow";
-            toggleFollow(action, userId);
+            toggleFollow("unfollow", userId);
         });
     });
 
-    // Attach listener to each result
+    // Attach listener to each user search container
     userSearchContainers.each(function () {
         $(this).on('click', function (event) {
             var userId = this.id.split('-')[1];
@@ -39,16 +40,15 @@ function attachEditFieldListeners() {
 }
 
 function toggleFollow(action, userId) {
+    var url = '';
     if (action === "follow") {
-        window.location.href = '/Controller/MethodName?methodParameter=' + userId;
+        url = '/User/FollowUser?userIdToFollow=' + userId;
     } else if (action === "unfollow") {
-        window.location.href = '/Controller/MethodName?methodParameter=' + userId;
+        url = '/User/UnfollowUser?userIdToUnfollow=' + userId;
     }
+    window.location.href = url;
 }
 
 function openProfile(userId) {
-    window.location.href = "/Home/Index/";
+    window.location.href = '/User/Profile/' + userId;
 }
-
-
-

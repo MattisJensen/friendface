@@ -7,11 +7,23 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h2>@Model.user.FirstName @Model.user.LastName's Profile</h2>
+            <h2>@("@")@Model.user.UserName Profile</h2>
             <div class="profile-header">
                 <h3>@Model.user.FirstName @Model.user.LastName</h3>
                 <p>@Model.user.Email</p>
             </div>
+            @if (Model.isCurrentUser == false)
+            {
+                if (Model.isFollowing)
+                {
+                    <button id="unfollowButton-@Model.user.Id" class="btn btn-sm btn-outline-secondary">Unfollow</button>
+                }
+                else
+                {
+                    <button id="followButton-@Model.user.Id" class="btn btn-sm btn-outline-secondary">Follow</button>
+                }
+            }
+
 
             <!-- Additional profile information here -->
             <!-- Edit profile button -->
@@ -23,3 +35,5 @@
         </div>
     </div>
    </div>
+<script src="~/js/Search/searchUser.js"></script>
+

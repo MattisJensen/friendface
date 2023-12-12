@@ -10,6 +10,8 @@
 
         public bool isCurrentUser { get; set; }
 
+        public bool isFollowing { get; set; } // Add this property
+
         public ChangePasswordViewModel ChangePasswordViewModel { get; set; }
 
 

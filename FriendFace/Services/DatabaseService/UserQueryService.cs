@@ -1,4 +1,5 @@
 using FriendFace.Data;
+using FriendFace.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +26,13 @@ public class UserQueryService
         {
             // Get the user from the database
             var user = _userManager.GetUserAsync(_signInManager.Context.User).Result;
+            if (user != null)
+            {
+                // Eagerly load the Following collection
+                user = _context.Users
+                    .Include(u => u.Following)
+                    .FirstOrDefault(u => u.Id == user.Id);
+            }
             return user;
         }
         else
@@ -76,4 +84,51 @@ public class UserQueryService
     
         return searchResult.Distinct().ToList();
     }
+
+    public async Task<bool> FollowUser(int currentUserId, int userIdToFollow)
+    {
+        var currentUser = await _context.Users
+            .Include(u => u.Following)
+            .FirstOrDefaultAsync(u => u.Id == currentUserId);
+
+        var userToFollow = await _context.Users
+            .Include(u => u.Followers)
+            .FirstOrDefaultAsync(u => u.Id == userIdToFollow);
+
+        if (currentUser == null || userToFollow == null)
+        {
+            return false;
+        }
+
+        // Check if the follow relationship already exists
+        if (!currentUser.Following.Any(f => f.FollowingId == userIdToFollow))
+        {
+            currentUser.Following.Add(new UserFollowsUser
+            {
+                FollowerId = currentUserId,
+                FollowingId = userIdToFollow
+            });
+
+            await _context.SaveChangesAsync();
+        }
+
+        return true;
+    }
+    public async Task<bool> UnfollowUser(int currentUserId, int userIdToUnfollow)
+    {
+        // Find the existing follow relationship
+        var followRelation = await _context.UserFollowsUsers
+            .FirstOrDefaultAsync(f => f.FollowerId == currentUserId && f.FollowingId == userIdToUnfollow);
+
+        if (followRelation != null)
+        {
+            // Remove the follow relationship from the context
+            _context.UserFollowsUsers.Remove(followRelation);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        return false;
+    }
+
 }

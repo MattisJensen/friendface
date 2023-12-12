@@ -29,10 +29,17 @@
                         
                         @if (SignInManager.IsSignedIn(User))
                         {
+
+                            <li class="nav-item">
+                                <!-- Link to the user's profile -->
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Profile" asp-route-id="@UserManager.GetUserId(User)">My Profile</a>
+                            </li>
                             <li class="nav-item">
                                 <!-- post request to the logout action -->
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Logout">Logout</a>
                             </li>
+
+                           
                         }
                         else
                         {

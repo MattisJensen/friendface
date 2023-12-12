@@ -36,6 +36,8 @@ namespace FriendFace.Controllers
 
             var loggedInUser = _userQueryService.GetLoggedInUser();
             bool isCurrentUser = loggedInUser != null && loggedInUser.Id == profileUser.Id;
+            bool isFollowing = loggedInUser != null &&
+                    loggedInUser.Following.Any(f => f.FollowingId == profileUser.Id);
 
             _logger.LogInformation("Profile found. Current user: {IsCurrentUser}", isCurrentUser);
 
@@ -43,7 +45,9 @@ namespace FriendFace.Controllers
             var viewModel = new UserProfileViewModel
             {
                 user = profileUser,
-                isCurrentUser = isCurrentUser
+                isCurrentUser = isCurrentUser,
+                isFollowing = isFollowing
+
                 // Populate other properties of the ViewModel as needed.
             };
 
@@ -137,10 +141,41 @@ namespace FriendFace.Controllers
             return RedirectToAction("Profile", "User", new {userId = _userQueryService.GetLoggedInUser().Id }); // or another appropriate view
         }
 
+        [HttpGet] // Change to HttpGet for the integration with your JavaScript
+        public async Task<IActionResult> FollowUser(int userIdToFollow)
+        {
+            var loggedInUserId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(loggedInUserId))
+            {
+                return Unauthorized();
+            }
 
+            var result = await _userQueryService.FollowUser(int.Parse(loggedInUserId), userIdToFollow);
+            if (!result)
+            {
+                return BadRequest();
+            }
 
+            return RedirectToAction("Profile", new { userId = userIdToFollow });
+        }
 
+        [HttpGet] // Change to HttpGet for the integration with your JavaScript
+        public async Task<IActionResult> UnfollowUser(int userIdToUnfollow)
+        {
+            var loggedInUserId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(loggedInUserId))
+            {
+                return Unauthorized();
+            }
 
+            var result = await _userQueryService.UnfollowUser(int.Parse(loggedInUserId), userIdToUnfollow);
+            if (!result)
+            {
+                return BadRequest();
+            }
+
+            return RedirectToAction("Profile", new { userId = userIdToUnfollow });
+        }
     }
 
 }
