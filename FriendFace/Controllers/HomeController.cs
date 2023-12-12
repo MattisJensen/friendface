@@ -20,6 +20,7 @@ namespace FriendFace.Controllers
         private readonly ApplicationDbContext _context;
 
         private readonly UserQueryService _userQueryService;
+        private readonly PostQueryService _postQueryService;
         
         private readonly CommentService _commentService;
         private readonly PostService _postService;
