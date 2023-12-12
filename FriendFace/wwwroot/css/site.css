@@ -55,3 +55,11 @@ body {
 .pointer {
     cursor: pointer;
 }
+
+/*.hidden-text { !*Inspired by Facebook's hidden h3 tag for create-post "inputfield"/button.*!*/
+/*    height: 1px;*/
+/*    width: 1px;*/
+/*    overflow-x: hidden;*/
+/*    overflow-y: hidden;*/
+/*    !*display: none;*!*/
+/*}*/
