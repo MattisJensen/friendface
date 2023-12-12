@@ -1,5 +1,6 @@
 using FriendFace.Data;
 using FriendFace.Models;
+using FriendFace.Services;
 using FriendFace.Services.DatabaseService;
 using FriendFace.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,33 @@ public class PostService
         _postUpdateService = postUpdateService;
         _postDeleteService = postDeleteService;
         _userQueryService = userQueryService;
+    }
+
+    public HomeIndexViewModel GetHomeIndexViewModel(bool followingPosts)
+    {
+        var loggedInUser = _userQueryService.GetLoggedInUser();
+
+        List<Post> postsInFeed;
+
+        if (followingPosts)
+        {
+            postsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id);
+        }
+        else
+        {
+            postsInFeed = _postQueryService.GetPostsFromUserId(loggedInUser.Id);
+        }
+
+        var postCharLimit = _postQueryService.GetPostCharacterLimit();
+
+        var model = new HomeIndexViewModel
+        {
+            User = loggedInUser,
+            PostsInFeed = postsInFeed,
+            FollowingPosts = followingPosts,
+            PostCharLimit = postCharLimit
+        };
+        return model;
     }
 
     public void ToggleLikePost(int postId)
@@ -75,75 +103,79 @@ public class PostService
         }
     }
 
-    public object DeletePost(int postId)
+    public void DeletePost(int postId)
     {
         try
         {
             // Check if the logged-in user is the owner of the post
             var loggedInUser = _userQueryService.GetLoggedInUser();
+            if (loggedInUser == null)
+            {
+                throw new Exception("You must be logged in to delete a post.");
+            }
+            
             var post = _postQueryService.GetPostFromId(postId);
 
             if (post.UserId == loggedInUser.Id)
             {
-                if (_postDeleteService.SoftDeletePost(postId))
+                if (!_postDeleteService.SoftDeletePost(postId))
                 {
-                    return new { success = true };
-                }
-                else
-                {
-                    return new { success = false, message = "An error occurred while deleting the post." };
+                    throw new Exception("An error occurred while deleting the post.");
                 }
             }
             else
             {
-                return new { success = false, message = "You do not have permission to delete this post." };
+                throw new Exception("You do not have permission to delete this post.");
             }
         }
         catch (Exception ex)
         {
-            return new { success = false, message = "An error occurred while deleting the post." };
+            throw new Exception("An error occurred while deleting the post.", ex);
         }
     }
 
-    public object EditPost(PostIdContentModel model)
+    public void EditPost(PostIdContentModel model)
     {
         try
         {
             int postId = model.PostId;
             string editedContent = model.Content;
 
-            // Check if the logged-in user is the owner of the post
             var loggedInUser = _userQueryService.GetLoggedInUser();
+            if (loggedInUser == null)
+            {
+                throw new Exception("You must be logged in to edit a post.");
+            }
+            
             var post = _postQueryService.GetPostFromId(postId);
-
+            
             if (post.UserId == loggedInUser.Id)
             {
                 // Check if the edited content is within the character limit
                 if (editedContent.Length <= _postQueryService.GetPostCharacterLimit())
                 {
-                    return new { success = _postUpdateService.UpdatePost(postId, editedContent) };
+                    if (!_postUpdateService.UpdatePost(postId, editedContent)) 
+                    {
+                        throw new Exception("An error occurred while editing the post.");
+                    }
                 }
                 else
                 {
-                    return new
-                    {
-                        success = false,
-                        message = "Edited content exceeds " + _postQueryService.GetPostCharacterLimit() + " characters."
-                    };
+                    throw new Exception("Edited content exceeds " + _postQueryService.GetPostCharacterLimit() + " characters.");
                 }
             }
             else
             {
-                return new { success = false, message = "You do not have permission to edit this post." };
+                throw new Exception("You do not have permission to edit this post.");
             }
         }
         catch (Exception ex)
         {
-            return new { success = false, message = "An error occurred while editing the post." };
+            throw new Exception("An error occurred while editing the post.", ex);
         }
     }
 
-    public string CreatePost(string content, ControllerContext controllerContext)
+    public void CreatePost(string content, ControllerContext controllerContext)
     {
         try
         {
@@ -151,66 +183,23 @@ public class PostService
             var loggedInUser = _userQueryService.GetLoggedInUser();
 
             // Check if logged in user is valid and if edited content is within character limit
-            if (loggedInUser != null && loggedInUser.Id > 0 && content.Length <= _postQueryService.GetPostCharacterLimit())
+            if (loggedInUser != null && loggedInUser.Id > 0 &&
+                content.Length <= _postQueryService.GetPostCharacterLimit())
             {
-                if (_postCreateService.CreatePost(content, loggedInUser))
+                if (!_postCreateService.CreatePost(content, loggedInUser))
                 {
-                    var latestPost = _postQueryService.GetLatestPostFromUserId(loggedInUser.Id);
-
-                    var postPartialHtml = RenderViewToString(controllerContext, "_PostFeedPartial",
-                        new HomeIndexViewModel
-                        {
-                            PostsByLoggedInUser = new List<Post> { latestPost },
-                            User = loggedInUser
-                        });
-
-                    return postPartialHtml;
-                }
-                else
-                {
-                    throw new Exception("Content exceeds " + _postQueryService.GetPostCharacterLimit() +
-                                        " characters.");
+                    throw new Exception("An error occurred while creating the post.");
                 }
             }
             else
             {
-                throw new Exception("You do not have permission to create this post.");
+                throw new Exception("Content exceeds " + _postQueryService.GetPostCharacterLimit() +
+                                    " characters.");
             }
         }
         catch (Exception ex)
         {
             throw new Exception("An error occurred while creating the post.", ex);
-        }
-    }
-
-    private string RenderViewToString(ControllerContext controllerContext, string viewName, object model)
-    {
-        using (var sw = new StringWriter())
-        {
-            var engine = controllerContext.HttpContext.RequestServices.GetRequiredService<IRazorViewEngine>();
-            var viewResult = engine.FindView(controllerContext, viewName, false);
-        
-            if (viewResult.View == null)
-            {
-                throw new ArgumentNullException($"{viewName} does not match any available view");
-            }
-
-            var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
-            {
-                Model = model
-            };
-
-            var viewContext = new ViewContext(controllerContext, viewResult.View,
-                viewDictionary,
-                new TempDataDictionary(controllerContext.HttpContext, controllerContext.HttpContext.RequestServices.GetRequiredService<ITempDataProvider>()),
-                sw,
-                new HtmlHelperOptions());
-
-            var t = viewResult.View.RenderAsync(viewContext);
-
-            t.Wait();
-
-            return sw.GetStringBuilder().ToString();
         }
     }
 }

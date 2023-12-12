@@ -1,21 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var followingFeedButton = $('#following-feed');
+    var followingFeedButton = $('#following-feed-btn');
     followingFeedButton.on('click', function (event) {
         followingFeed();
     });
-    
-    var profileFeedButton = $('#profile-feed');
+
+    var profileFeedButton = $('#profile-feed-btn');
     profileFeedButton.on('click', function (event) {
         profileFeed();
     });
 });
 
 function followingFeed() {
-    $('#feed').show();
-    $('#profile').hide();
+    window.location.href = '/Home/Index';
 }
 
 function profileFeed() {
-    $('#feed').hide();
-    $('#profile').show();
+    window.location.href = '/Home/IndexWithProfileFeed';
 }

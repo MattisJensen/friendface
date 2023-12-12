@@ -2,73 +2,56 @@
 
 @model FriendFace.ViewModels.HomeIndexViewModel
 
-@{
-    var postList = ViewData["list"] as string == "feed" ? Model.PostsInFeed : Model.PostsByLoggedInUser;
-}
-
-@foreach (var post in postList)
+@foreach (var post in Model.PostsInFeed)
 {
-    <div id="postContainer-@post.Id" class="col-md-6 offset-md-3 mb-3">
-        <div class="card">
-            <div class="card-header" style="background-color: #f8f8f8">
-                <div class="d-flex justify-content-between align-items-center">
-                    @* Name, Username *@
-                    <span>
-                        <span style="font-weight: bold;">@post.User.FirstName @Html.Raw(" ") @post.User.LastName</span>
-                        <span style="font-size: 80%;" class="text-muted">@Html.Raw("@")@post.User.UserName</span>
-                    </span>
-
-                    @* Menu for post *@
-                    @if (post.User.Id == Model.User.Id)
-                    {
-                        <partial name="_PostMenuPartial" model="post"/>
-                    }
-                </div>
+    <div id="postContainer-@post.Id" class="card col-md-6 offset-md-3 mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            @* Name, Username *@
+            <div>
+                <span class="card-header-text">@post.User.FirstName @Html.Raw(" ") @post.User.LastName</span>
+                <span class="text-muted small">@Html.Raw("@")@post.User.UserName</span>
             </div>
-            <div class="card-body">
-                @* The content of the post *@
-                <form id="editContent-form-@post.Id">
-                    <input type="hidden" id="editContent-@post.Id" name="PostId" value="@post.Id" readonly>
-                    <input class="form-control-plaintext shadow-none" type="text" id="editContent-editField-@post.Id" name="Content" value="@post.Content" readonly>
 
-                    <div id="editContent-charcounter-container-@post.Id" class="form-text d-none">
-                        <p><span id="editContent-chars-@post.Id">0</span>/@Model.PostCharLimit chars</p>
-                    </div>
+            @* Menu for post *@
+            @if (post.User.Id == Model.User.Id)
+            {
+                <partial name="_PostMenuPartial" model="post"/>
+            }
+        </div>
 
-                    <button class="btn btn-success btn-sm mb-4 me-2 d-none" id="editContent-button-save-@post.Id" type="submit" disabled>Save</button>
-                    <button id="editContent-button-cancel-@post.Id" class="btn btn-secondary btn-sm mb-4 d-none" type="button" disabled>Cancel</button>
-                </form>
+        <div class="card-body">
+            @* The content of the post *@
+            <p id="postContent-@post.Id">@post.Content</p>
+            
+            @* Date and icons *@
+            <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">@post.Time.ToString("HH:mm dd/MM/yy")</small>
 
-                @* Date and icons *@
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">@post.Time.ToString("HH:mm dd/MM/yy")</small>
+                <span class="text-muted small">
+                    @{
+                        bool isLiked = post.Likes.Any(like => like.UserId == Model.User.Id);
+                        string heartIcon = GetHeartIcon(isLiked);
+                        string heartIconColor = isLiked ? "red" : "inherit";
+                    }
+                    <i class="@heartIcon text-decoration-none pointer" id="likeButton-@post.Id" style="color: @heartIconColor"></i>
+                    <span id="likeCount-@post.Id">@post.Likes.Count</span>
+                    <i class="far fa-comment comment-btn pointer" id="comment-btn-@post.Id" data-post-id="@post.Id"></i> @post.Comments.Count
+                </span>
+            </div>
 
-                    <span style="font-size: 80%;" class="text-muted">
-                        @{
-                            bool isLiked = post.Likes.Any(like => like.UserId == Model.User.Id);
-                            string heartIcon = GetHeartIcon(isLiked);
-                            string heartIconColor = isLiked ? "red" : "inherit";
-                        }
-                        <a class="@heartIcon text-decoration-none cursor-pointer" style="color: @heartIconColor" data-post-id="@post.Id" href="/Home/ToggleLikePost?postId=@post.Id"></a>
-                        <span id="likeCount-@post.Id">@post.Likes.Count</span>
-                        <i class="far fa-comment comment-btn" id="comment-btn-@post.Id" data-post-id="@post.Id" style="cursor: pointer;"></i> @post.Comments.Count
-                    </span>
-                </div>
-
-                @* Comments *@
-                <partial name="_CommentPartial" model="post.Comments"/>
-                <div id="commentCreateContainer-@post.Id" style="display: none">
-                    <div class="col-md-6 offset-md-3 mb-3">
-                        <p id="commentContent-create-@post.Id" contenteditable="false" class="card-text text-left input-field"></p>
-                    </div>
-                </div>
+            @* Comments *@
+            <partial name="_CommentPartial" model="post.Comments"/>
+            <div class="col-md-6 offset-md-3 mb-3" id="commentCreateContainer-@post.Id" style="display: none">
+                <p id="commentContent-create-@post.Id" contenteditable="false" class="card-text text-left input-field"></p>
             </div>
         </div>
     </div>
 }
 
+
 @functions {
     string GetHeartIcon(bool isLiked) => isLiked ? "fas fa-heart" : "far fa-heart";
 }
 
-<script src="js/Home/createComment.js"></script>
+<script src="~/js/Home/createComment.js"></script>
+<script src="~/js/Home/Post/postToggleLike.js"></script>

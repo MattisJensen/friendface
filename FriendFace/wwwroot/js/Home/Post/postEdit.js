@@ -1,77 +1,79 @@
 document.addEventListener('DOMContentLoaded', function () {
     var editFields = $('[id^="editField-"]');
 
+    // Remove existing listeners to prevent multiple listeners being attached to one field
+    editFields.off('click');
+
     // Attach listener to each delete field
     editFields.each(function () {
         $(this).on('click', function (event) {
             event.preventDefault();
             var postId = this.id.split('-')[1];
-            postEdit(postId);
+            addEditForm(postId);
         });
     });
 });
 
-function postEdit(postId) {
-    var saveButton = $('#editContent-button-save-' + postId);
-    var cancelButton = $('#editContent-button-cancel-' + postId);
+function addEditForm(postId) {
+    var postContentField = $('#postContent-' + postId);
+    postContentField.addClass('d-none');
 
-    var charContainer = $('#editContent-charcounter-container-' + postId);
-    var charCountText = $('#editContent-chars-' + postId);
+    var originalPostContent = postContentField.text();
     var charLimit = postCharLimit;
 
-    var menuButton = $('#postMenuButton-' + postId);
-    var editField = $('#editContent-editField-' + postId);
+    var formHtml = `
+            <form id="editContent-form-${postId}">
+                <input class="d-none" id="editContent-${postId}" name="PostId" value="${postId}">
+                <input class="form-control-plaintext shadow-none input-field" type="text" id="editContent-editField-${postId}" name="Content" value="${originalPostContent}">
 
+                <div id="editContent-charcounter-container-${postId}" class="form-text">
+                    <p><span id="editContent-chars-${postId}">${originalPostContent.length}</span>/${charLimit}</p>
+                </div>
+
+                <button class="btn btn-success btn-sm mb-4 me-2" id="editContent-button-save-${postId}" type="submit">Save</button>
+                <button id="editContent-button-cancel-${postId}" class="btn btn-secondary btn-sm mb-4" type="button" >Cancel</button>
+            </form>
+        `;
+    postContentField.after(formHtml);
+    
+    addEditFunctionality(postId);
+}
+
+function addEditFunctionality(postId) {
     var form = $('#editContent-form-' + postId);
     form.attr('action', "/Home/EditPost");
     form.attr('method', "post");
-
-    saveButton.removeAttr('disabled');
-    cancelButton.removeAttr('disabled');
-    charCountText.text(editField.val().length);
-
-    editField.prop('readOnly', false);
-    editField.addClass('input-field');
-    editField.focus();
-
-    saveButton.removeClass('d-none');
-    cancelButton.removeClass('d-none');
-    charContainer.removeClass('d-none');
-
+    
+    var menuButton = $('#postMenuButton-' + postId);
     menuButton.addClass('d-none');
+    
+    var saveButton = $('#editContent-button-save-' + postId);
+    var cancelButton = $('#editContent-button-cancel-' + postId);
+
+    var charCountText = $('#editContent-chars-' + postId);
+    var charLimit = postCharLimit;
+
+    var editField = $('#editContent-editField-' + postId);
+    editField.focus();
 
     let originalPostContent = editField.val();
 
     cancelButton.on('click', function (event) {
         leaveEditMode(postId, originalPostContent);
     });
-    
+
     editField.on('input', function () {
         charCountText.text(editField.val().length); // Update character count text
         saveButton.prop('disabled', editField.val().length > charLimit); // Disable save button if content length exceeds char limit
     });
 }
 
-function leaveEditMode(postId, originalPostContent) {
-    var saveButton = $('#editContent-button-save-' + postId);
-    var cancelButton = $('#editContent-button-cancel-' + postId);
-
-    var charContainer = $('#editContent-charcounter-container-' + postId);
-    var charCountText = $('#editContent-chars-' + postId);
-
+function leaveEditMode(postId) {
     var menuButton = $('#postMenuButton-' + postId);
-    var editField = $('#editContent-editField-' + postId);
-
-    saveButton.addClass('d-none');
-    saveButton.prop('disabled', true);
-    cancelButton.addClass('d-none');
-    cancelButton.prop('disabled', true);
-    charContainer.addClass('d-none');
+    var form = $('#editContent-form-' + postId);
+    var postContentField = $('#postContent-' + postId);
 
     menuButton.removeClass('d-none');
-
-    charCountText.text(0);
-    editField.prop('readOnly', true);
-    editField.removeClass('input-field');
-    editField.val(originalPostContent);
+    form.remove();
+    postContentField.removeClass('d-none');
 }

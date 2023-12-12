@@ -44,6 +44,7 @@ builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<SignInManager<User>>();
 builder.Services.AddScoped<UserManager<User>>();
 builder.Services.AddScoped<CommentService>();
+builder.Services.AddScoped<SearchService>();
 
 
 var app = builder.Build();
