@@ -35,6 +35,7 @@ namespace FriendFace.Controllers
             }
 
             var loggedInUser = _userQueryService.GetLoggedInUser();
+            bool isLoggedIn = loggedInUser != null;
             bool isCurrentUser = loggedInUser != null && loggedInUser.Id == profileUser.Id;
             bool isFollowing = loggedInUser != null &&
                     loggedInUser.Following.Any(f => f.FollowingId == profileUser.Id);
@@ -46,7 +47,8 @@ namespace FriendFace.Controllers
             {
                 user = profileUser,
                 isCurrentUser = isCurrentUser,
-                isFollowing = isFollowing
+                isFollowing = isFollowing,
+                isLoggedIn = isLoggedIn,
 
                 // Populate other properties of the ViewModel as needed.
             };

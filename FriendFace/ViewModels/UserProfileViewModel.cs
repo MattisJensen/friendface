@@ -8,6 +8,8 @@
 
         public User user { get; set; }
 
+        public bool isLoggedIn { get; set; }
+
         public bool isCurrentUser { get; set; }
 
         public bool isFollowing { get; set; } // Add this property

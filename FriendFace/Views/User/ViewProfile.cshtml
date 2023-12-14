@@ -7,12 +7,13 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h2>@("@")@Model.user.UserName Profile</h2>
+            <h2>@("@")@Model.user.UserName@("'s") Profile</h2>
             <div class="profile-header">
-                <h3>@Model.user.FirstName @Model.user.LastName</h3>
-                <p>@Model.user.Email</p>
+                <h3>Firstname: @Model.user.FirstName @Model.user.LastName</h3>
+                <h3>Lastname: @Model.user.LastName</h3>
+                <p>Email: @Model.user.Email</p>
             </div>
-            @if (Model.isCurrentUser == false)
+            @if (Model.isCurrentUser == false && Model.isLoggedIn)
             {
                 if (Model.isFollowing)
                 {
@@ -29,7 +30,7 @@
             <!-- Edit profile button -->
             @if (Model.isCurrentUser)
             {
-                <a href="@Url.Action("EditProfile", "User")" class="btn btn-default">Edit Profile</a>
+                <a href="@Url.Action("EditProfile", "User")" class="btn btn-primary">Edit Profile</a>
             }
 
         </div>
