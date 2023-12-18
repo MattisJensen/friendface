@@ -21,17 +21,17 @@ namespace FriendFace.Controllers
 
         private readonly UserQueryService _userQueryService;
         private readonly PostQueryService _postQueryService;
-        
+
         private readonly CommentService _commentService;
         private readonly PostService _postService;
 
         private readonly RazorViewEngine _razorViewEngine;
         private readonly ITempDataProvider _tempDataProvider;
 
-      
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context,
-            UserQueryService userQueryService, PostService postService, CommentService commentService, PostQueryService postQueryService)
+            UserQueryService userQueryService, PostService postService, CommentService commentService,
+            PostQueryService postQueryService)
         {
             _logger = logger;
             _context = context;
@@ -45,8 +45,6 @@ namespace FriendFace.Controllers
 
         public IActionResult Index()
         {
-
-            
             var loggedInUser = _userQueryService.GetLoggedInUser();
             if (loggedInUser == null)
             {
@@ -58,12 +56,14 @@ namespace FriendFace.Controllers
                 };
                 return View("GuestIndex", guestViewModel);
             }
-            
-            var model = _postService.GetHomeIndexViewModel(true);
-            
-            return View(model);
+            else
+            {
+                var model = _postService.GetHomeIndexViewModel(true);
+
+                return View(model);
+            }
         }
-        
+
         public IActionResult IndexWithProfileFeed()
         {
             var loggedInUser = _userQueryService.GetLoggedInUser();
@@ -71,9 +71,9 @@ namespace FriendFace.Controllers
             {
                 return RedirectToAction("Login", "Login");
             }
-            
+
             var model = _postService.GetHomeIndexViewModel(false);
-            
+
             return View("Index", model);
         }
 
@@ -87,14 +87,14 @@ namespace FriendFace.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        
+
         [HttpGet]
         public IActionResult ToggleLikePost(int postId)
         {
             _postService.ToggleLikePost(postId);
             return RedirectToAction("Index");
         }
-        
+
         [HttpGet]
         public IActionResult GetPostLikes([FromQuery] int postId)
         {
@@ -115,19 +115,19 @@ namespace FriendFace.Controllers
             _postService.EditPost(model);
             return RedirectToAction("Index");
         }
-        
+
         [HttpPost]
         public IActionResult CreatePost(string content)
         {
             _postService.CreatePost(content, ControllerContext);
             return RedirectToAction("Index");
         }
-        
+
         [HttpPost]
-        public IActionResult CreateComment([FromBody] PostIdContentModel request)
+        public IActionResult CreateComment(PostIdContentModel model)
         {
-            var result = _commentService.CreateComment(request.Content, request.PostId);
-            return Json(result);
+            _commentService.CreateComment(model.Content, model.PostId);
+            return RedirectToAction("Index");
         }
     }
 }

@@ -24,7 +24,7 @@
             <article id="postContent-@post.Id">@post.Content</article>
             
             @* Date and icons *@
-            <footer class="d-flex justify-content-between align-items-center">
+            <footer class="d-flex justify-content-between align-items-center" id="postFooter-@post.Id">
                 <small class="text-muted">@post.Time.ToString("HH:mm dd/MM/yy")</small>
 
                 <span class="text-muted small">
@@ -35,7 +35,7 @@
                     }
                     <i class="@heartIcon text-decoration-none pointer" id="likeButton-@post.Id" style="color: @heartIconColor"></i>
                     <span id="likeCount-@post.Id">@post.Likes.Count</span>
-                    <i class="far fa-comment comment-btn pointer" id="comment-btn-@post.Id" data-post-id="@post.Id"></i> @post.Comments.Count
+                    <i class="far fa-comment comment-btn pointer" id="commentButton-@post.Id" data-post-id="@post.Id"></i> @post.Comments.Count
                 </span>
             </footer>
 
@@ -48,10 +48,9 @@
     </div>
 }
 
-
 @functions {
     string GetHeartIcon(bool isLiked) => isLiked ? "fas fa-heart" : "far fa-heart";
 }
 
-<script src="~/js/Home/createComment.js"></script>
+<script src="~/js/Home/commentCreate.js"></script>
 <script src="~/js/Home/Post/postToggleLike.js"></script>

@@ -33,14 +33,7 @@ public class PostService
 
         List<Post> postsInFeed;
 
-        if (followingPosts)
-        {
-            postsInFeed = _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id);
-        }
-        else
-        {
-            postsInFeed = _postQueryService.GetPostsFromUserId(loggedInUser.Id);
-        }
+        postsInFeed = followingPosts ? _postQueryService.GetLatestPostsFromFeed(loggedInUser.Id) : _postQueryService.GetPostsFromUserId(loggedInUser.Id);
 
         var postCharLimit = _postQueryService.GetPostCharacterLimit();
 

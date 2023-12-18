@@ -101,7 +101,8 @@ public class PostQueryService
         return _context.Posts
             .Include(p => p.User)
             .Include(p => p.Likes)
-            .Include(p => p.Comments.OrderBy(c => c.Time))
+            .Include(p => p.Comments
+                .OrderByDescending(c => c.Time))
             .ThenInclude(c => c.User)
             .Where(p => followingUserIds.Contains(p.UserId))
             .Where(p => !p.IsDeleted)

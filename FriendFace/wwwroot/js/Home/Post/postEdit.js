@@ -56,10 +56,8 @@ function addEditFunctionality(postId) {
     var editField = $('#editContent-editField-' + postId);
     editField.focus();
 
-    let originalPostContent = editField.val();
-
     cancelButton.on('click', function (event) {
-        leaveEditMode(postId, originalPostContent);
+        leaveEditMode(postId);
     });
 
     editField.on('input', function () {
