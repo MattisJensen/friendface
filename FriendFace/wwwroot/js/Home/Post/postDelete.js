@@ -24,7 +24,7 @@ function postDelete(deleteField, postId) {
 
 
     // Add listener to execute delete request
-    deleteField.on('click', deleteRequest);
+    deleteField.on('click', deleteRequest(postId));
 
     // Add listener to reset the delete text when the dropdown is closed
     $(document).on('click', function (e) {
@@ -32,17 +32,18 @@ function postDelete(deleteField, postId) {
             resetDeleteText(postId, deleteField);
         }
     });
-
-    function deleteRequest() {
-        window.location.href = '/Home/DeletePost?postId=' + postId;
-    }
-
-    function resetDeleteText(postId, deleteField) {
-        deleteField.text('Delete');
-        // reset color to default
-        deleteField.css('color', '');
-        deleteField.css('backgroundColor', '');
-
-        deleteField.off('click', deleteRequest);
-    }
 }
+
+function deleteRequest(postId) {
+    window.location.href = '/Home/DeletePost?postId=' + postId;
+}
+
+function resetDeleteText(postId, deleteField) {
+    deleteField.text('Delete');
+    // reset color to default
+    deleteField.css('color', '');
+    deleteField.css('backgroundColor', '');
+
+    deleteField.off('click', deleteRequest);
+}
+

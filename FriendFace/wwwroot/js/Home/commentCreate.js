@@ -26,7 +26,7 @@ function addCommentForm(postId) {
                 </div>
 
                 <button class="btn btn-success btn-sm mb-4 me-2" id="comment-button-save-${postId}" type="submit">
-                    <i class="fas fa-arrow-up"></i> Publish Post
+                    <i class="fas fa-arrow-up"></i> Publish Coemment
                 </button>
                 <button class="btn btn-secondary btn-sm mb-4" id="comment-button-cancel-${postId}" type="button">Cancel</button>
             </form>
