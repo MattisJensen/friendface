@@ -57,7 +57,7 @@ function addEditFunctionality(postId) {
     editField.focus();
 
     cancelButton.on('click', function (event) {
-        leaveEditMode(postId);
+        leaveEditPostMode(postId);
     });
 
     editField.on('input', function () {
@@ -66,7 +66,7 @@ function addEditFunctionality(postId) {
     });
 }
 
-function leaveEditMode(postId) {
+function leaveEditPostMode(postId) {
     var menuButton = $('#postMenuButton-' + postId);
     var form = $('#editContent-form-' + postId);
     var postContentField = $('#postContent-' + postId);
