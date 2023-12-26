@@ -52,7 +52,7 @@ function addCreateFunctionality(postId) {
     field.focus();
     
     cancelButton.on('click', function (event) {
-        leaveEditMode(postId);
+        leaveCreateCommentMode(postId);
     });
 
     field.on('input', function () {
@@ -61,11 +61,8 @@ function addCreateFunctionality(postId) {
     });
 }
 
-function leaveEditMode(postId) {
+function leaveCreateCommentMode(postId) {
     var form = $('#comment-form-' + postId);
-    var postContentField = $('#postContent-' + postId);
-    
     form.remove();
-    postContentField.removeClass('d-none');
 }
 
