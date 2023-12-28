@@ -22,15 +22,16 @@ function postDelete(deleteField, postId) {
     deleteField.css('color', 'rgb(255,255,255)');
     deleteField.css('backgroundColor', 'rgb(220,53,69)');
 
-
-    // Add listener to execute delete request
-    deleteField.on('click', deleteRequest(postId));
-
     // Add listener to reset the delete text when the dropdown is closed
     $(document).on('click', function (e) {
         if (!$(e.target).closest('.dropdown-menu').length) {
             resetDeleteText(postId, deleteField);
         }
+    });
+    
+    // Add listener to delete button
+    deleteField.on('click', function (event) {
+        deleteRequest(postId);
     });
 }
 
